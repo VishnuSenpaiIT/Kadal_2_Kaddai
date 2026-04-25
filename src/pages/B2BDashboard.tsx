@@ -190,8 +190,82 @@ export default function B2BDashboard() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+      <main className="max-w-[1800px] mx-auto px-4 md:px-8 py-8 space-y-8">
         
+        {/* B2B Hero Section */}
+        <section className="grid lg:grid-cols-12 gap-8 items-start bg-white p-6 md:p-10 rounded-[32px] border border-gray-200 shadow-sm relative overflow-hidden">
+           {/* Decorative Background Element */}
+           <div className="absolute -top-24 -right-24 w-96 h-96 bg-brand-primary/5 rounded-full blur-3xl pointer-events-none" />
+           
+           {/* Left: CTA & Filters */}
+           <div className="lg:col-span-5 space-y-8 relative z-10">
+              <div className="space-y-4">
+                 <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                    Market Open • Direct from Trawler
+                 </div>
+                 <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+                    Premium Sourcing <br/>
+                    <span className="text-brand-primary italic">for Professionals</span>
+                 </h1>
+                 <p className="text-gray-500 text-lg max-w-md leading-relaxed">
+                    Access real-time inventory and exclusive bulk pricing for your restaurant or hotel.
+                 </p>
+              </div>
+
+              <div className="space-y-4">
+                 <button 
+                  onClick={() => document.getElementById('ordering-table')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="w-full sm:w-auto bg-brand-primary text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-brand-secondary transition-all shadow-xl shadow-blue-900/20 active:scale-95"
+                 >
+                    Start Bulk Buying
+                 </button>
+                 
+                 <div className="flex flex-wrap gap-2">
+                    {['Fresh', 'Frozen', 'High Demand', 'Low Price'].map(filter => (
+                      <button 
+                        key={filter}
+                        className="px-4 py-2 bg-gray-50 border border-gray-100 rounded-full text-xs font-bold text-gray-500 hover:border-brand-primary hover:text-brand-primary transition-all"
+                      >
+                        {filter}
+                      </button>
+                    ))}
+                 </div>
+              </div>
+           </div>
+
+           {/* Right: Today's Catch (Dynamic Cards) */}
+           <div className="lg:col-span-7 space-y-6 relative z-10">
+              <div className="flex items-center justify-between">
+                 <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <TrendingDown size={20} className="text-brand-secondary" />
+                    Today's Best Value
+                 </h2>
+                 <span className="text-xs font-bold text-brand-primary uppercase tracking-widest cursor-pointer hover:underline">View All</span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 {b2bProducts.slice(0, 3).map((p) => (
+                    <div key={p.id} className="bg-gray-50 border border-gray-100 rounded-2xl p-4 hover:shadow-lg transition-all group">
+                       <div className="aspect-square rounded-xl overflow-hidden mb-4 relative">
+                          <img src={p.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                          <div className="absolute top-2 left-2">
+                             <span className="bg-white/90 backdrop-blur px-2 py-1 rounded-md text-[8px] font-bold text-brand-primary uppercase">
+                                {p.origin}
+                             </span>
+                          </div>
+                       </div>
+                       <h3 className="font-bold text-gray-900 text-sm mb-1 truncate">{p.name}</h3>
+                       <div className="flex items-baseline justify-between">
+                          <span className="text-brand-primary font-bold">₹{p.price}/kg</span>
+                          <span className="text-[10px] text-emerald-600 font-bold">In Stock</span>
+                       </div>
+                    </div>
+                 ))}
+              </div>
+           </div>
+        </section>
+
         {/* Trust & Quick Actions */}
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 flex-1">
@@ -265,7 +339,7 @@ export default function B2BDashboard() {
         </div>
 
         {/* Bulk Ordering Table */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        <div id="ordering-table" className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50/50 gap-4">
             <div>
               <h2 className="text-xl font-bold text-gray-900">Today's Fresh Catch</h2>
