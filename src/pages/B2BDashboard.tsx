@@ -9,7 +9,11 @@ import {
   ShieldCheck,
   Search,
   ShoppingCart,
-  Bell
+  Bell,
+  User,
+  ChevronDown,
+  Boxes,
+  Filter
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -92,21 +96,96 @@ export default function B2BDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-24">
-      {/* Navbar */}
-      <header className="bg-brand-primary text-white sticky top-0 z-50 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-            <span className="text-xl font-bold tracking-tight text-white">Kadal 2 Kadaai <span className="text-brand-secondary">B2B</span></span>
+      {/* Refined B2B Header */}
+      <header className="bg-brand-primary text-white sticky top-0 z-50 shadow-xl border-b border-white/10">
+        <div className="max-w-[1800px] mx-auto px-4 md:px-8 h-20 flex items-center gap-8">
+          {/* Logo Section */}
+          <div 
+            className="flex items-center gap-3 cursor-pointer shrink-0" 
+            onClick={() => navigate('/')}
+          >
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-inner">
+               <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-7 w-auto" />
+            </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-lg font-bold tracking-tight text-white uppercase">Kadal 2 Kadaai</span>
+              <span className="text-[10px] font-black tracking-[0.2em] text-brand-secondary uppercase">B2B Portal</span>
+            </div>
           </div>
-          <div className="flex items-center gap-6">
-             <div className="hidden md:flex items-center gap-2 text-sm bg-white/10 px-3 py-1.5 rounded-full">
-               <Clock size={14} className="text-brand-secondary" />
-               <span>Stock updated at {lastUpdated}</span>
-             </div>
-             <button className="flex items-center gap-2 font-bold text-sm bg-white text-brand-primary px-4 py-2 rounded-lg hover:bg-gray-100 transition">
-                <ShoppingCart size={18} />
-                <span>${calculateTotal().toFixed(2)}</span>
-             </button>
+
+          {/* Centered Search & Category Section */}
+          <div className="hidden lg:flex flex-1 max-w-3xl items-center bg-white/10 border border-white/20 rounded-2xl p-1 transition-all focus-within:bg-white focus-within:shadow-2xl focus-within:shadow-blue-900/40">
+            <div className="flex items-center gap-2 px-4 border-r border-white/20">
+              <Filter size={16} className="text-brand-secondary" />
+              <select className="bg-transparent text-sm font-bold text-white focus:outline-none appearance-none cursor-pointer pr-6 py-2 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTcgMTBsNSA1IDUtNSIvPjwvc3ZnPg==')] bg-no-repeat bg-[right_center] focus:text-gray-900">
+                <option className="text-gray-900">Fish Types</option>
+                <option className="text-gray-900">Freshness</option>
+                <option className="text-gray-900">Cut Type</option>
+              </select>
+            </div>
+            <div className="flex-1 flex items-center gap-3 px-4">
+              <Search size={18} className="text-white/40 group-focus-within:text-brand-primary" />
+              <input 
+                type="text" 
+                placeholder="Search fish, type, supplier..." 
+                className="w-full bg-transparent text-sm font-medium text-white placeholder:text-white/40 focus:outline-none focus:text-gray-900"
+              />
+            </div>
+          </div>
+
+          {/* Action Icons Section */}
+          <div className="flex items-center gap-4 md:gap-6 ml-auto">
+            <div className="hidden xl:flex flex-col items-end mr-4">
+              <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Market Status</span>
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+                Live Stock • Updated {lastUpdated}
+              </div>
+            </div>
+
+            <button 
+              onClick={() => showToast("Opening Bulk Order Form...", "info")}
+              className="hidden md:flex items-center gap-2 bg-brand-secondary text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-lg shadow-orange-500/20 hover:scale-105 active:scale-95 transition-all"
+            >
+              <Boxes size={18} />
+              <span>Bulk Order</span>
+            </button>
+
+            <div className="flex items-center gap-2 md:gap-4 border-l border-white/10 pl-4 md:pl-6">
+              <button 
+                className="relative p-2 text-white/80 hover:text-white transition-colors"
+                onClick={() => showToast("Shopping cart opened", "info")}
+              >
+                <ShoppingCart size={22} />
+                {calculateTotal() > 0 && (
+                  <span className="absolute top-0 right-0 w-4 h-4 bg-brand-secondary text-[10px] font-black rounded-full flex items-center justify-center border-2 border-brand-primary">
+                    !
+                  </span>
+                )}
+              </button>
+              
+              <button className="p-2 text-white/80 hover:text-white transition-colors">
+                <Bell size={22} />
+              </button>
+
+              <button className="flex items-center gap-2 pl-2 border-l border-white/10">
+                <div className="w-10 h-10 rounded-full bg-white/10 border border-white/10 flex items-center justify-center hover:bg-white/20 transition-all">
+                  <User size={20} className="text-white" />
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Search - Visible only on small screens */}
+        <div className="lg:hidden px-4 pb-4">
+          <div className="flex items-center bg-white/10 rounded-xl p-3 border border-white/10">
+            <Search size={18} className="text-white/40 mr-3" />
+            <input 
+              type="text" 
+              placeholder="Search fish, type, supplier..." 
+              className="w-full bg-transparent text-sm text-white placeholder:text-white/40 focus:outline-none"
+            />
           </div>
         </div>
       </header>
