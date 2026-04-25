@@ -46,7 +46,7 @@ function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, onNavig
         isOutOfStock && "opacity-75 grayscale-[0.5]"
       )}
     >
-      <div className="relative h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
+      <div className="relative h-40 md:h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
         {product.image ? (
           <img 
             src={product.image} 
@@ -55,42 +55,42 @@ function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, onNavig
             referrerPolicy="no-referrer"
           />
         ) : (
-          <div className="flex flex-col items-center gap-2 text-gray-300">
-            <ImageIcon size={48} strokeWidth={1} />
-            <span className="text-[10px] font-bold uppercase tracking-widest">No Image Available</span>
+          <div className="flex flex-col items-center gap-1 text-gray-300">
+            <ImageIcon size={24} md:size={48} strokeWidth={1} />
+            <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-center px-2">No Image</span>
           </div>
         )}
-        <div className="absolute top-4 left-4 flex gap-2">
-          <span className="bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase text-brand-primary">
+        <div className="absolute top-2 left-2 md:top-4 md:left-4 flex flex-col gap-1">
+          <span className="bg-white/90 backdrop-blur px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[8px] md:text-[10px] font-bold uppercase text-brand-primary">
             {product.origin}
           </span>
           {isOutOfStock && (
-            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase">
-              Out of Stock
+            <span className="bg-red-500 text-white px-2 py-0.5 md:px-3 md:py-1 rounded-full text-[8px] md:text-[10px] font-bold uppercase text-center">
+              Sold Out
             </span>
           )}
         </div>
         <button 
           onClick={onFavoriteToggle}
           className={cn(
-            "absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-sm",
+            "absolute top-2 right-2 md:top-4 md:right-4 w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center transition-all shadow-sm",
             isFavorite ? "bg-red-50 text-red-500" : "bg-white/90 backdrop-blur text-gray-400 hover:text-red-500"
           )}
         >
-          <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+          <Heart size={14} md:size={18} fill={isFavorite ? "currentColor" : "none"} />
         </button>
       </div>
       
-      <div className="p-4 md:p-6 flex flex-col flex-1">
-        <h3 className="text-xl md:text-2xl mb-2 text-gray-950 font-sans font-bold group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
-        <p className="text-gray-400 text-sm mb-6 flex items-center gap-1 opacity-80">
-          <MapPin size={12} /> {product.origin}
+      <div className="p-3 md:p-6 flex flex-col flex-1">
+        <h3 className="text-sm md:text-2xl mb-1 md:mb-2 text-gray-950 font-sans font-bold group-hover:text-brand-primary transition-colors leading-tight line-clamp-2">{product.name}</h3>
+        <p className="text-gray-400 text-[10px] md:text-sm mb-3 md:mb-6 flex items-center gap-1 opacity-80">
+          <MapPin size={10} md:size={12} /> {product.origin}
         </p>
 
-        <div className="flex items-end justify-between mt-auto">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between mt-auto gap-3">
           <div className="flex items-baseline gap-1">
-            <span className="text-3xl font-bold text-brand-primary tracking-tight">₹{product.price}</span>
-            <span className="text-gray-400 text-sm mb-1">/{product.unit}</span>
+            <span className="text-lg md:text-3xl font-bold text-brand-primary tracking-tight">₹{product.price}</span>
+            <span className="text-gray-400 text-[10px] md:text-sm mb-1">/{product.unit}</span>
           </div>
           <button 
             disabled={isOutOfStock}
@@ -98,10 +98,10 @@ function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, onNavig
               e.stopPropagation();
               onCartAdd();
             }}
-            className="bg-brand-primary text-white px-5 py-3 rounded-2xl hover:bg-brand-secondary transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-blue-900/10 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full sm:w-auto bg-brand-primary text-white px-3 py-2 md:px-5 md:py-3 rounded-xl md:rounded-2xl hover:bg-brand-secondary transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-blue-900/10 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <ShoppingBag size={18} />
-            <span className="text-xs font-bold uppercase tracking-wider">{isOutOfStock ? 'Sold Out' : 'Add'}</span>
+            <ShoppingBag size={14} md:size={18} />
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider">{isOutOfStock ? 'Sold Out' : 'Add'}</span>
           </button>
         </div>
       </div>
@@ -225,25 +225,31 @@ export default function ConsumerHome() {
 
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 flex flex-col lg:flex-row gap-8">
         {/* Mobile Category Selector */}
-        <div className="lg:hidden mt-8 overflow-x-auto no-scrollbar -mx-4 px-4 pb-2">
-          <div className="flex gap-2 min-w-max">
-            {categories.filter(c => c.isVisibleConsumer).map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  setActiveCategory(cat.name);
-                  scrollToProducts();
-                }}
-                className={cn(
-                  "px-6 py-3 rounded-full font-bold text-sm transition-all border whitespace-nowrap",
-                  activeCategory === cat.name 
-                    ? "bg-brand-primary text-white border-brand-primary shadow-lg" 
-                    : "bg-white text-gray-500 border-gray-100 hover:border-brand-primary/30"
-                )}
-              >
-                {cat.name}
-              </button>
-            ))}
+        <div className="lg:hidden mt-8">
+          <div className="flex items-center justify-between mb-4 px-4">
+            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Categories</h3>
+            <span className="text-[10px] text-brand-secondary font-bold animate-pulse">Scroll to see all →</span>
+          </div>
+          <div className="overflow-x-auto no-scrollbar -mx-4 px-4 pb-4">
+            <div className="flex gap-2 min-w-max">
+              {categories.filter(c => c.isVisibleConsumer).map(cat => (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setActiveCategory(cat.name);
+                    scrollToProducts();
+                  }}
+                  className={cn(
+                    "px-5 py-2.5 rounded-full font-bold text-xs transition-all border whitespace-nowrap",
+                    activeCategory === cat.name 
+                      ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-blue-900/20" 
+                      : "bg-white text-gray-500 border-gray-100 hover:border-brand-primary/30"
+                  )}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -298,7 +304,7 @@ export default function ConsumerHome() {
 
           <motion.div 
             layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6"
+            className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3 md:gap-6"
           >
             <AnimatePresence mode="popLayout">
               {filteredProducts.length > 0 ? (
