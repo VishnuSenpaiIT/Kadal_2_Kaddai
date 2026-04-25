@@ -13,7 +13,8 @@ import {
   Fish,
   Waves,
   Heart,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Check
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +23,7 @@ import { useStore, Product } from '../lib/store';
 
 // Hardcoded categories removed to use dynamic store categories
 
-interface ProductProps {
+export interface ProductProps {
   product: Product;
   onCartAdd: () => void;
   onFavoriteToggle: (e: React.MouseEvent) => void;
@@ -31,7 +32,7 @@ interface ProductProps {
   key?: React.Key;
 }
 
-function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, onNavigate }: ProductProps) {
+export function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, onNavigate }: ProductProps) {
   const isOutOfStock = (product.stock + product.incomingStock - product.soldToday) <= 0;
 
   return (
@@ -111,8 +112,6 @@ function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, onNavig
 
 export default function ConsumerHome() {
   const { products: PRODUCTS, categories } = useStore();
-  const [activeCategory, setActiveCategory] = useState('Seafood (Regular Fish)');
-  const [sortBy, setSortBy] = useState<'rating' | 'price' | 'newest'>('rating');
   const [cartCount, setCartCount] = useState(0);
   const [showCart, setShowCart] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -121,17 +120,10 @@ export default function ConsumerHome() {
   const navigate = useNavigate();
   const { showToast } = useToast();
 
-  const filteredProducts = PRODUCTS
-    .filter(p => {
-      const matchesCategory = p.category === activeCategory;
-      const isVisible = p.isVisibleConsumer;
-      return matchesCategory && isVisible;
-    })
-    .sort((a, b) => {
-      if (sortBy === 'price') return a.price - b.price;
-      if (sortBy === 'rating') return b.rating - a.rating;
-      return b.id - a.id;
-    });
+
+
+  const topPicks = PRODUCTS.filter(p => p.isVisibleConsumer).sort((a, b) => b.rating - a.rating).slice(0, 8);
+  const recommendedProducts = PRODUCTS.filter(p => p.isVisibleConsumer).sort((a, b) => a.price - b.price).slice(0, 6);
 
   const toggleFavorite = (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -223,115 +215,92 @@ export default function ConsumerHome() {
         </div>
       </section>
 
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 flex flex-col lg:flex-row gap-8">
-        {/* Mobile Category Grid */}
-        <div className="lg:hidden mt-8 px-4">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Browse Categories</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-3 mb-4">
-            {categories.filter(c => c.isVisibleConsumer).map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  setActiveCategory(cat.name);
-                  scrollToProducts();
-                }}
-                className={cn(
-                  "px-4 py-4 rounded-2xl font-bold text-[13px] transition-all border text-left flex flex-col justify-between h-24",
-                  activeCategory === cat.name 
-                    ? "bg-brand-primary text-white border-brand-primary shadow-xl shadow-blue-900/20 scale-[1.02]" 
-                    : "bg-gray-50 text-gray-600 border-gray-100 hover:border-brand-primary/30"
-                )}
-              >
-                <span className="leading-tight">{cat.name}</span>
-                <div className={cn(
-                  "w-6 h-6 rounded-lg flex items-center justify-center",
-                  activeCategory === cat.name ? "bg-white/20" : "bg-white border border-gray-100"
-                )}>
-                  <ChevronRight size={14} />
-                </div>
-              </button>
-            ))}
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-12">
+        {/* Category Cards Section */}
+        <div className="mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6">
+            <button
+              onClick={() => {
+                navigate('/category/all', { state: { categoryName: 'All' } });
+              }}
+              className="relative h-32 md:h-48 rounded-2xl md:rounded-[24px] overflow-hidden group shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 text-left w-full"
+            >
+              <img src="https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&q=80&w=800" alt="All Seafood" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/30 to-transparent transition-opacity duration-300 opacity-80 group-hover:opacity-100" />
+              <div className="absolute inset-0 p-4 md:p-6 flex flex-col justify-end">
+                <span className="text-white font-bold text-base md:text-xl drop-shadow-md">All</span>
+                <span className="text-gray-200 text-[10px] md:text-xs mt-1 font-medium tracking-wide drop-shadow-sm">View full collection</span>
+              </div>
+            </button>
+            {categories.filter(c => c.isVisibleConsumer).map(cat => {
+              const bgImage = 
+                cat.name === 'Marine Fish' ? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=800' :
+                cat.name === 'Freshwater Fish' ? 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=800' :
+                cat.name === 'Shellfish' ? 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&q=80&w=800' :
+                'https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?auto=format&fit=crop&q=80&w=800';
+                
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    const slug = cat.name.toLowerCase().replace(/ /g, '-');
+                    navigate(`/category/${slug}`, { state: { categoryName: cat.name } });
+                  }}
+                  className="relative h-32 md:h-48 rounded-2xl md:rounded-[24px] overflow-hidden group shadow-sm transition-all hover:shadow-xl hover:-translate-y-1 text-left w-full"
+                >
+                  <img src={bgImage} alt={cat.name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/30 to-transparent transition-opacity duration-300 opacity-80 group-hover:opacity-100" />
+                  <div className="absolute inset-0 p-4 md:p-6 flex flex-col justify-end">
+                    <span className="text-white font-bold text-base md:text-xl drop-shadow-md">{cat.name}</span>
+                    <span className="text-gray-200 text-[10px] md:text-xs mt-1 font-medium tracking-wide drop-shadow-sm">Explore fresh catch</span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        {/* Sidebar (Desktop Only) */}
-        <aside className="hidden lg:block w-80 shrink-0 sticky top-[88px] h-[calc(100vh-120px)] py-12 overflow-y-auto no-scrollbar border-r border-gray-100">
-          <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-8 px-4">Categories</h3>
-          <div className="space-y-2">
-            {categories.filter(c => c.isVisibleConsumer).map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  setActiveCategory(cat.name);
-                  scrollToProducts();
-                }}
-                className={cn(
-                  "w-full text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-between group",
-                  activeCategory === cat.name 
-                    ? "bg-brand-primary text-white shadow-lg shadow-blue-900/10" 
-                    : "text-gray-500 hover:bg-gray-50 hover:text-brand-primary"
-                )}
-              >
-                <span className="truncate">{cat.name}</span>
-                <ChevronRight size={16} className={cn(
-                  "transition-transform",
-                  activeCategory === cat.name ? "translate-x-0" : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0"
-                )} />
-              </button>
-            ))}
-          </div>
-        </aside>
-
         {/* Main Content */}
-        <main id="marketplace-section" className="flex-1 py-12">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{activeCategory}</h2>
-              <p className="text-gray-500 text-sm">Showing {filteredProducts.length} items</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Sort by:</span>
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold text-gray-600 outline-none focus:ring-2 focus:ring-brand-primary/10"
-              >
-                <option value="rating">Top Rated</option>
-                <option value="price">Price: Low to High</option>
-                <option value="newest">New Arrivals</option>
-              </select>
-            </div>
-          </div>
+        <main id="marketplace-section" className="flex-1">
+              {/* Default State: Top Picks */}
+              <div className="mb-16">
+                <div className="mb-8">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Top Picks</h2>
+                  <p className="text-gray-500 text-sm">Recommended for you</p>
+                </div>
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
+                  {topPicks.map((product) => (
+                    <ProductCard 
+                      key={`top-${product.id}`}
+                      product={product}
+                      onCartAdd={() => setCartCount(prev => prev + 1)}
+                      onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
+                      isFavorite={favorites.includes(product.id)}
+                      onNavigate={() => navigate(`/product/${product.id}`)}
+                    />
+                  ))}
+                </div>
+              </div>
 
-          <motion.div 
-            layout
-            className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-3 md:gap-6"
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => (
-                  <ProductCard 
-                    key={product.id}
-                    product={product}
-                    onCartAdd={() => setCartCount(prev => prev + 1)}
-                    onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
-                    isFavorite={favorites.includes(product.id)}
-                    onNavigate={() => navigate(`/product/${product.id}`)}
-                  />
-                ))
-              ) : (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="col-span-full py-20 text-center bg-gray-50 rounded-3xl border border-dashed border-gray-200"
-                >
-                  <p className="text-gray-400 text-lg">No products found in this category.</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+              {/* Default State: Recommended */}
+              <div className="mb-12">
+                <div className="mb-8">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Recommended</h2>
+                  <p className="text-gray-500 text-sm">Fresh arrivals and popular choices</p>
+                </div>
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-6">
+                  {recommendedProducts.map((product) => (
+                    <ProductCard 
+                      key={`rec-${product.id}`}
+                      product={product}
+                      onCartAdd={() => setCartCount(prev => prev + 1)}
+                      onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
+                      isFavorite={favorites.includes(product.id)}
+                      onNavigate={() => navigate(`/product/${product.id}`)}
+                    />
+                  ))}
+                </div>
+              </div>
         </main>
       </div>
 
