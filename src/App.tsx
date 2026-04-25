@@ -9,6 +9,7 @@ import Recipes from './pages/Recipes';
 import ProductDetail from './pages/ProductDetail';
 import Checkout from './pages/Checkout';
 import B2BOrderTracking from './pages/B2BOrderTracking';
+import B2BBuyerDashboard from './pages/B2BBuyerDashboard';
 import { ToastProvider } from './components/Toast';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/b2b" element={<B2BDashboard />} />
           <Route path="/b2b/tracking/:orderId?" element={<B2BOrderTracking />} />
+          <Route path="/b2b/dashboard" element={<B2BBuyerDashboard />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
