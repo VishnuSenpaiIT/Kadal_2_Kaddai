@@ -13,7 +13,9 @@ import {
   User,
   ChevronDown,
   Boxes,
-  Filter
+  Filter,
+  Star,
+  Scissors
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -246,20 +248,68 @@ export default function B2BDashboard() {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                  {b2bProducts.slice(0, 3).map((p) => (
-                    <div key={p.id} className="bg-gray-50 border border-gray-100 rounded-2xl p-4 hover:shadow-lg transition-all group">
-                       <div className="aspect-square rounded-xl overflow-hidden mb-4 relative">
-                          <img src={p.image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                          <div className="absolute top-2 left-2">
-                             <span className="bg-white/90 backdrop-blur px-2 py-1 rounded-md text-[8px] font-bold text-brand-primary uppercase">
-                                {p.origin}
-                             </span>
+                    <div key={p.id} className="bg-white border border-gray-200 rounded-2xl p-4 hover:shadow-xl transition-all group flex flex-col h-full">
+                      {/* Image & Top Badges */}
+                      <div className="aspect-[4/3] rounded-xl overflow-hidden mb-4 relative shrink-0">
+                        <img src={p.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute top-2 left-2 flex flex-col gap-1">
+                          <span className="bg-white/95 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-gray-800 uppercase tracking-wider shadow-sm">
+                            {p.origin}
+                          </span>
+                          {p.stock < 20 && (
+                            <span className="bg-red-500/90 backdrop-blur px-2 py-1 rounded text-[10px] font-bold text-white uppercase tracking-wider shadow-sm">
+                              Low Stock
+                            </span>
+                          )}
+                        </div>
+                        <div className="absolute top-2 right-2">
+                          <span className="bg-brand-secondary text-white shadow-sm px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                            <TrendingDown size={10} /> Bulk: 10% Off
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 flex flex-col">
+                        <div className="flex justify-between items-start mb-3">
+                          <h3 className="font-bold text-gray-900 text-base leading-tight pr-2">{p.name}</h3>
+                          <div className="flex items-center gap-1 text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded text-xs font-bold shrink-0">
+                            <Star size={10} fill="currentColor" /> {p.rating || 4.8}
                           </div>
-                       </div>
-                       <h3 className="font-bold text-gray-900 text-sm mb-1 truncate">{p.name}</h3>
-                       <div className="flex items-baseline justify-between">
-                          <span className="text-brand-primary font-bold">₹{p.price}/kg</span>
-                          <span className="text-[10px] text-emerald-600 font-bold">In Stock</span>
-                       </div>
+                        </div>
+
+                        <div className="text-[11px] text-gray-500 font-medium space-y-1.5 mb-4">
+                          <p className="flex items-center gap-1.5"><ShieldCheck size={14} className="text-emerald-500"/> Certified Fresh (0-4°C)</p>
+                          <p className="flex items-center gap-1.5"><Scissors size={14} className="text-blue-500"/> Custom Cuts Available</p>
+                        </div>
+
+                        <div className="mt-auto">
+                          <div className="flex items-end justify-between mb-4">
+                            <div>
+                              <span className="text-xl font-black text-brand-primary tracking-tight">₹{p.price}</span>
+                              <span className="text-xs text-gray-500 font-medium">/kg</span>
+                            </div>
+                            <span className={cn("text-[11px] font-bold uppercase tracking-wider", p.stock > 100 ? "text-emerald-600" : "text-orange-500")}>
+                              {p.stock > 100 ? 'In Stock' : `${p.stock}kg Left`}
+                            </span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2">
+                            <button 
+                              onClick={() => navigate(`/product/${p.id}`)}
+                              className="py-2.5 border border-gray-200 text-gray-700 rounded-lg text-xs font-bold hover:border-brand-primary hover:text-brand-primary transition-colors text-center"
+                            >
+                              View Details
+                            </button>
+                            <button 
+                              onClick={() => showToast(`Added ${p.name} to bulk order`, "success")}
+                              className="py-2.5 bg-brand-primary text-white rounded-lg text-xs font-bold hover:bg-brand-secondary transition-colors text-center flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+                            >
+                              <ShoppingCart size={14} /> Add
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                  ))}
               </div>
