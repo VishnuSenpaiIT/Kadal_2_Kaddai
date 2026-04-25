@@ -8,6 +8,7 @@ import Sustainability from './pages/Sustainability';
 import Recipes from './pages/Recipes';
 import ProductDetail from './pages/ProductDetail';
 import Checkout from './pages/Checkout';
+import B2BOrderTracking from './pages/B2BOrderTracking';
 import { ToastProvider } from './components/Toast';
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="/product/:id" element={<ProductDetail />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/b2b" element={<B2BDashboard />} />
+          <Route path="/b2b/tracking/:orderId?" element={<B2BOrderTracking />} />
           <Route path="/admin" element={<AdminDashboard />} />
         </Routes>
       </BrowserRouter>
