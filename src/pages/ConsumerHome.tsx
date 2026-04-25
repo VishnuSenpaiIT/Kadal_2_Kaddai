@@ -81,8 +81,8 @@ function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, onNavig
         </button>
       </div>
       
-      <div className="p-6 flex flex-col flex-1">
-        <h3 className="text-2xl mb-2 text-gray-950 font-sans font-bold group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
+      <div className="p-4 md:p-6 flex flex-col flex-1">
+        <h3 className="text-xl md:text-2xl mb-2 text-gray-950 font-sans font-bold group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
         <p className="text-gray-400 text-sm mb-6 flex items-center gap-1 opacity-80">
           <MapPin size={12} /> {product.origin}
         </p>
@@ -116,6 +116,7 @@ export default function ConsumerHome() {
   const [cartCount, setCartCount] = useState(0);
   const [showCart, setShowCart] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -154,11 +155,11 @@ export default function ConsumerHome() {
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div 
-            className="flex items-center gap-2 cursor-pointer" 
+            className="flex items-center gap-2 cursor-pointer shrink-0" 
             onClick={() => navigate('/')}
           >
-            <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-10 w-auto" />
-            <span className="text-2xl font-bold text-brand-primary">Kadal 2 Kadaai</span>
+            <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-8 md:h-10 w-auto" />
+            <span className="text-lg md:text-2xl font-bold text-brand-primary truncate">Kadal 2 Kadaai</span>
           </div>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
@@ -186,7 +187,10 @@ export default function ConsumerHome() {
                 </span>
               )}
             </button>
-            <button className="md:hidden p-2 text-gray-600">
+            <button 
+              className="md:hidden p-2 text-gray-600"
+              onClick={() => setShowMobileMenu(true)}
+            >
               <Menu size={24} />
             </button>
           </div>
@@ -211,7 +215,7 @@ export default function ConsumerHome() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-5xl md:text-6xl text-white mb-4 leading-tight">
+            <h1 className="text-4xl md:text-6xl text-white mb-4 leading-tight px-4">
               Fresh Catch <br/>
               <span className="italic text-brand-secondary font-light">Direct to Your Door</span>
             </h1>
@@ -219,9 +223,32 @@ export default function ConsumerHome() {
         </div>
       </section>
 
-      <div className="max-w-[1600px] mx-auto px-6 flex gap-8">
-        {/* Sidebar */}
-        <aside className="w-80 shrink-0 sticky top-[88px] h-[calc(100vh-120px)] py-12 overflow-y-auto no-scrollbar border-r border-gray-100">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6 flex flex-col lg:flex-row gap-8">
+        {/* Mobile Category Selector */}
+        <div className="lg:hidden mt-8 overflow-x-auto no-scrollbar -mx-4 px-4 pb-2">
+          <div className="flex gap-2 min-w-max">
+            {categories.filter(c => c.isVisibleConsumer).map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setActiveCategory(cat.name);
+                  scrollToProducts();
+                }}
+                className={cn(
+                  "px-6 py-3 rounded-full font-bold text-sm transition-all border whitespace-nowrap",
+                  activeCategory === cat.name 
+                    ? "bg-brand-primary text-white border-brand-primary shadow-lg" 
+                    : "bg-white text-gray-500 border-gray-100 hover:border-brand-primary/30"
+                )}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Sidebar (Desktop Only) */}
+        <aside className="hidden lg:block w-80 shrink-0 sticky top-[88px] h-[calc(100vh-120px)] py-12 overflow-y-auto no-scrollbar border-r border-gray-100">
           <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-8 px-4">Categories</h3>
           <div className="space-y-2">
             {categories.filter(c => c.isVisibleConsumer).map(cat => (
@@ -229,8 +256,7 @@ export default function ConsumerHome() {
                 key={cat.id}
                 onClick={() => {
                   setActiveCategory(cat.name);
-                  const el = document.getElementById('marketplace-section');
-                  el?.scrollIntoView({ behavior: 'smooth' });
+                  scrollToProducts();
                 }}
                 className={cn(
                   "w-full text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-between group",
@@ -251,12 +277,13 @@ export default function ConsumerHome() {
 
         {/* Main Content */}
         <main id="marketplace-section" className="flex-1 py-12">
-          <div className="flex items-center justify-between mb-12">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">{activeCategory}</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{activeCategory}</h2>
               <p className="text-gray-500 text-sm">Showing {filteredProducts.length} items</p>
             </div>
             <div className="flex items-center gap-4">
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Sort by:</span>
               <select 
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
@@ -309,19 +336,19 @@ export default function ConsumerHome() {
             className="fixed inset-0 bg-white z-[100] flex flex-col p-8"
           >
              <div className="max-w-4xl mx-auto w-full">
-                <div className="flex justify-between items-center mb-12">
+                <div className="flex justify-between items-center mb-8 md:mb-12">
                    <h2 className="text-3xl font-serif text-brand-primary">Search Store</h2>
                    <button onClick={() => setShowSearch(false)} className="p-4 hover:bg-gray-100 rounded-full">
                       <X size={32} />
                    </button>
                 </div>
-                <div className="flex items-center gap-4 border-b-2 border-brand-primary py-6 mb-12">
-                   <Search size={32} className="text-gray-300" />
+                 <div className="flex items-center gap-4 border-b-2 border-brand-primary py-4 md:py-6 mb-8 md:mb-12">
+                   <Search size={24} className="text-gray-300 md:size-32" />
                    <input 
                     type="text" 
                     autoFocus
-                    placeholder="Search fresh fish, shellfish, or recipes..." 
-                    className="w-full bg-transparent text-3xl font-sans outline-none placeholder:text-gray-200"
+                    placeholder="Search fresh fish..." 
+                    className="w-full bg-transparent text-xl md:text-3xl font-sans outline-none placeholder:text-gray-200"
                    />
                 </div>
                 <div className="grid md:grid-cols-2 gap-12">
@@ -447,40 +474,108 @@ export default function ConsumerHome() {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="grid md:grid-cols-3 gap-12">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
-                <Truck size={32} className="text-brand-secondary" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 md:gap-12">
+            <div className="flex flex-col items-center text-center px-4">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
+                <Truck size={28} className="text-brand-secondary md:size-32" />
               </div>
-              <h4 className="text-2xl mb-3">Free Cold-Chain Delivery</h4>
-              <p className="text-blue-100/60 leading-relaxed">
+              <h4 className="text-xl md:text-2xl mb-3">Free Cold-Chain Delivery</h4>
+              <p className="text-blue-100/60 leading-relaxed text-sm md:text-base">
                 Temperature-controlled delivery within 24 hours of landing at our docks. 
-                Free for orders over $150.
               </p>
             </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
-                <ShieldCheck size={32} className="text-brand-secondary" />
+            <div className="flex flex-col items-center text-center px-4">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
+                <ShieldCheck size={28} className="text-brand-secondary md:size-32" />
               </div>
-              <h4 className="text-2xl mb-3">100% Quality Guaranteed</h4>
-              <p className="text-blue-100/60 leading-relaxed">
-                If it's not the best seafood you've ever had, we'll refund you instantly. 
-                No questions asked.
+              <h4 className="text-xl md:text-2xl mb-3">100% Quality Guaranteed</h4>
+              <p className="text-blue-100/60 leading-relaxed text-sm md:text-base">
+                If it's not the best seafood you've ever had, we'll refund you instantly.
               </p>
             </div>
-            <div className="flex flex-col items-center text-center">
-              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
-                <MapPin size={32} className="text-brand-secondary" />
+            <div className="flex flex-col items-center text-center px-4">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
+                <MapPin size={28} className="text-brand-secondary md:size-32" />
               </div>
-              <h4 className="text-2xl mb-3">Full Traceability</h4>
-              <p className="text-blue-100/60 leading-relaxed">
-                Scan the QR code on your package to see exactly where and when 
-                your seafood was caught.
+              <h4 className="text-xl md:text-2xl mb-3">Full Traceability</h4>
+              <p className="text-blue-100/60 leading-relaxed text-sm md:text-base">
+                Scan the QR code to see exactly where and when your seafood was caught.
               </p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {showMobileMenu && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowMobileMenu(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]" 
+            />
+            <motion.div 
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed left-0 top-0 h-full w-full max-w-[280px] bg-white shadow-2xl z-[110] p-8 flex flex-col"
+            >
+              <div className="flex items-center justify-between mb-12">
+                <div className="flex items-center gap-2">
+                  <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-8 w-auto" />
+                  <span className="text-xl font-bold text-brand-primary">Kadal 2 Kadaai</span>
+                </div>
+                <button 
+                  onClick={() => setShowMobileMenu(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-6 text-lg font-bold text-gray-900">
+                <button 
+                  onClick={() => { setShowMobileMenu(false); scrollToProducts(); }} 
+                  className="flex items-center justify-between group hover:text-brand-primary transition-colors text-left"
+                >
+                  Marketplace <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-primary" />
+                </button>
+                <button 
+                  onClick={() => navigate('/sustainability')} 
+                  className="flex items-center justify-between group hover:text-brand-primary transition-colors text-left"
+                >
+                  Sustainability <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-primary" />
+                </button>
+                <button 
+                  onClick={() => navigate('/recipes')} 
+                  className="flex items-center justify-between group hover:text-brand-primary transition-colors text-left"
+                >
+                  Recipes <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-primary" />
+                </button>
+                <button 
+                  onClick={() => navigate('/b2b')} 
+                  className="flex items-center justify-between group hover:text-brand-primary transition-colors text-left"
+                >
+                  Wholesale <ChevronRight size={20} className="text-gray-300 group-hover:text-brand-primary" />
+                </button>
+              </div>
+
+              <div className="mt-auto pt-8 border-t border-gray-100 space-y-4">
+                 <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Connect With Us</p>
+                 <div className="flex gap-4">
+                    <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-600">In</div>
+                    <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-600">Fb</div>
+                    <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-600">Ig</div>
+                 </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <footer className="bg-gray-50 pt-20 pb-10 border-t border-gray-100">
@@ -539,7 +634,7 @@ export default function ConsumerHome() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 flex flex-col md:row items-center justify-between border-t border-gray-200 pt-8 gap-4">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between border-t border-gray-200 pt-8 gap-4">
           <p className="text-gray-400 text-xs text-center md:text-left">
             &copy; 2024 Kadal 2 Kadaai. All fish ethically sourced.
           </p>

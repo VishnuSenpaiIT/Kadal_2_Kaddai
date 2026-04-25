@@ -30,3 +30,12 @@
   background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
 }
 
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+
