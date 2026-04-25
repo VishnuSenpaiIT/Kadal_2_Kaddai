@@ -10,6 +10,7 @@ import ProductDetail from './pages/ProductDetail';
 import Checkout from './pages/Checkout';
 import B2BOrderTracking from './pages/B2BOrderTracking';
 import B2BBuyerDashboard from './pages/B2BBuyerDashboard';
+import CategoryPage from './pages/CategoryPage';
 import { ToastProvider } from './components/Toast';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Entry />} />
           <Route path="/consumer" element={<ConsumerHome />} />
+          <Route path="/category/:categoryId" element={<CategoryPage />} />
           <Route path="/sustainability" element={<Sustainability />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/product/:id" element={<ProductDetail />} />
