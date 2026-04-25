@@ -26,7 +26,8 @@ import {
   Truck,
   Droplets,
   ThermometerSnowflake,
-  Sparkles
+  Sparkles,
+  Boxes
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useToast } from '../components/Toast';
@@ -49,6 +50,8 @@ export default function ProductDetail() {
   const [selectedCut, setSelectedCut] = useState('Curry Cut');
   const [quantity, setQuantity] = useState(1);
   const [activeImage, setActiveImage] = useState(0);
+  const [orderMode, setOrderMode] = useState<'retail' | 'bulk'>('bulk');
+  const [bulkQty, setBulkQty] = useState(50);
   const { showToast } = useToast();
   
   const product = ALL_PRODUCTS.find(p => p.id === parseInt(id || '1')) || ALL_PRODUCTS[0];
@@ -155,91 +158,171 @@ export default function ProductDetail() {
               </div>
             </div>
 
+            <div className="flex bg-blue-50/50 p-1 rounded-2xl mb-2 border border-blue-100">
+              <button onClick={() => setOrderMode('retail')} className={cn("flex-1 py-2.5 text-sm font-bold rounded-xl transition-all", orderMode === 'retail' ? "bg-white shadow-sm text-brand-primary" : "text-gray-500 hover:text-gray-900")}>Retail / Home</button>
+              <button onClick={() => setOrderMode('bulk')} className={cn("flex-1 py-2.5 text-sm font-bold rounded-xl transition-all flex items-center justify-center gap-2", orderMode === 'bulk' ? "bg-brand-primary shadow-sm text-white" : "text-gray-500 hover:text-gray-900")}>
+                <Boxes size={16} /> Bulk / B2B
+              </button>
+            </div>
+
             <div className="p-6 bg-white rounded-3xl border border-blue-50 shadow-sm space-y-6">
-              <div className="flex items-baseline justify-between">
-                <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Price per kg</p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold text-brand-primary">₹{product.price}</span>
-                    <span className="text-sm text-gray-400">/ kg</span>
+              {orderMode === 'retail' ? (
+                <>
+                  <div className="flex items-baseline justify-between">
+                    <div>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Price per kg</p>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-3xl font-bold text-brand-primary">₹{product.price}</span>
+                        <span className="text-sm text-gray-400">/ kg</span>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Estimated Delivery</p>
+                      <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
+                        <Truck size={16} />
+                        <span>Today, 6PM - 9PM</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Weight Selection */}
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Select Weight</p>
+                    <div className="grid grid-cols-3 gap-3">
+                      {WEIGHT_OPTIONS.map(weight => (
+                        <button
+                          key={weight}
+                          onClick={() => setSelectedWeight(weight)}
+                          className={cn(
+                            "py-3 rounded-xl border text-sm font-bold transition-all",
+                            selectedWeight === weight 
+                              ? "bg-brand-primary border-brand-primary text-white shadow-md shadow-brand-primary/20" 
+                              : "bg-white border-blue-100 text-gray-500 hover:border-brand-primary/30"
+                          )}
+                        >
+                          {weight}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Cut Selection */}
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Choose Your Cut</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      {CUT_OPTIONS.map(cut => (
+                        <button
+                          key={cut}
+                          onClick={() => setSelectedCut(cut)}
+                          className={cn(
+                            "py-3 px-4 rounded-xl border text-xs font-bold transition-all flex items-center justify-between",
+                            selectedCut === cut 
+                              ? "bg-blue-50 border-brand-primary text-brand-primary" 
+                              : "bg-white border-blue-100 text-gray-500 hover:border-brand-primary/30"
+                          )}
+                        >
+                          {cut}
+                          {selectedCut === cut && <Check size={14} />}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4">
+                    <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-2xl border border-gray-100">
+                      <button 
+                        onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                        className="w-10 h-10 rounded-xl hover:bg-white flex items-center justify-center font-bold text-gray-400 hover:text-brand-primary transition-all"
+                      >
+                        -
+                      </button>
+                      <span className="text-lg font-bold w-4 text-center">{quantity}</span>
+                      <button 
+                        onClick={() => setQuantity(q => q + 1)}
+                        className="w-10 h-10 rounded-xl hover:bg-white flex items-center justify-center font-bold text-gray-400 hover:text-brand-primary transition-all"
+                      >
+                        +
+                      </button>
+                    </div>
+                    <button 
+                      onClick={handleAddToCart}
+                      className="flex-1 bg-brand-primary text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/25 active:scale-95"
+                    >
+                      <Plus size={20} />
+                      Add to Cart
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-6">
+                  {/* Supplier & Grading */}
+                  <div className="flex items-center justify-between border-b border-blue-50 pb-4">
+                    <div>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Supplier</p>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-gray-900">Coastal Fisheries Co.</span>
+                        <div className="flex items-center gap-1 text-orange-400 bg-orange-50 px-1.5 py-0.5 rounded text-xs font-bold">
+                          <Star size={10} fill="currentColor" /> 4.9
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Size Grading</p>
+                      <span className="font-bold text-sm text-gray-900">800g - 1.2kg / piece</span>
+                    </div>
+                  </div>
+
+                  {/* Tiered Pricing */}
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Bulk Pricing Tiers (per kg)</p>
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="border border-blue-100 bg-gray-50 rounded-xl p-3 text-center">
+                        <p className="text-xs font-bold text-gray-500 mb-1">10kg - 49kg</p>
+                        <p className="text-lg font-black text-brand-primary">₹{(product.price * 0.95).toFixed(0)}</p>
+                        <p className="text-[10px] text-emerald-600 font-bold">5% Off</p>
+                      </div>
+                      <div className="border border-blue-100 bg-gray-50 rounded-xl p-3 text-center">
+                        <p className="text-xs font-bold text-gray-500 mb-1">50kg - 99kg</p>
+                        <p className="text-lg font-black text-brand-primary">₹{(product.price * 0.90).toFixed(0)}</p>
+                        <p className="text-[10px] text-emerald-600 font-bold">10% Off</p>
+                      </div>
+                      <div className="border border-brand-primary bg-blue-50 rounded-xl p-3 text-center relative overflow-hidden">
+                        <div className="absolute top-0 right-0 bg-brand-secondary text-white text-[8px] font-bold px-2 py-0.5 rounded-bl-lg uppercase tracking-wider">Best Value</div>
+                        <p className="text-xs font-bold text-brand-primary mb-1">100kg+</p>
+                        <p className="text-lg font-black text-brand-primary">₹{(product.price * 0.85).toFixed(0)}</p>
+                        <p className="text-[10px] text-emerald-600 font-bold">15% Off</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quantity & CTA */}
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Enter Quantity (kg)</p>
+                    <div className="flex gap-4">
+                      <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-2xl border border-gray-100 w-1/3">
+                        <button onClick={() => setBulkQty(q => Math.max(10, q - 10))} className="w-10 h-10 rounded-xl hover:bg-white flex items-center justify-center font-bold text-gray-400 hover:text-brand-primary transition-all">-</button>
+                        <input type="number" value={bulkQty} onChange={(e) => setBulkQty(Number(e.target.value))} className="w-full bg-transparent text-center font-bold outline-none" />
+                        <button onClick={() => setBulkQty(q => q + 10)} className="w-10 h-10 rounded-xl hover:bg-white flex items-center justify-center font-bold text-gray-400 hover:text-brand-primary transition-all">+</button>
+                      </div>
+                      <button onClick={() => showToast(`Added ${bulkQty}kg to B2B Order`, 'success')} className="flex-1 bg-brand-secondary text-white rounded-2xl font-bold flex items-center justify-center gap-2 hover:bg-[#ff8f5c] transition-all shadow-lg active:scale-95">
+                        <Boxes size={20} /> Buy in Bulk
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Logistics Info */}
+                  <div className="flex items-center justify-between pt-4 border-t border-blue-50">
+                    <div className="flex items-center gap-2">
+                      <ThermometerSnowflake size={16} className="text-blue-500" />
+                      <span className="text-xs font-bold text-gray-600">Cold Chain (0-4°C)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Truck size={16} className="text-emerald-500" />
+                      <span className="text-xs font-bold text-gray-600">Same-Day Dispatch</span>
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Estimated Delivery</p>
-                  <div className="flex items-center gap-2 text-emerald-600 font-bold text-sm">
-                    <Truck size={16} />
-                    <span>Today, 6PM - 9PM</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Weight Selection */}
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Select Weight</p>
-                <div className="grid grid-cols-3 gap-3">
-                  {WEIGHT_OPTIONS.map(weight => (
-                    <button
-                      key={weight}
-                      onClick={() => setSelectedWeight(weight)}
-                      className={cn(
-                        "py-3 rounded-xl border text-sm font-bold transition-all",
-                        selectedWeight === weight 
-                          ? "bg-brand-primary border-brand-primary text-white shadow-md shadow-brand-primary/20" 
-                          : "bg-white border-blue-100 text-gray-500 hover:border-brand-primary/30"
-                      )}
-                    >
-                      {weight}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Cut Selection */}
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Choose Your Cut</p>
-                <div className="grid grid-cols-2 gap-3">
-                  {CUT_OPTIONS.map(cut => (
-                    <button
-                      key={cut}
-                      onClick={() => setSelectedCut(cut)}
-                      className={cn(
-                        "py-3 px-4 rounded-xl border text-xs font-bold transition-all flex items-center justify-between",
-                        selectedCut === cut 
-                          ? "bg-blue-50 border-brand-primary text-brand-primary" 
-                          : "bg-white border-blue-100 text-gray-500 hover:border-brand-primary/30"
-                      )}
-                    >
-                      {cut}
-                      {selectedCut === cut && <Check size={14} />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-2xl border border-gray-100">
-                  <button 
-                    onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="w-10 h-10 rounded-xl hover:bg-white flex items-center justify-center font-bold text-gray-400 hover:text-brand-primary transition-all"
-                  >
-                    -
-                  </button>
-                  <span className="text-lg font-bold w-4 text-center">{quantity}</span>
-                  <button 
-                    onClick={() => setQuantity(q => q + 1)}
-                    className="w-10 h-10 rounded-xl hover:bg-white flex items-center justify-center font-bold text-gray-400 hover:text-brand-primary transition-all"
-                  >
-                    +
-                  </button>
-                </div>
-                <button 
-                  onClick={handleAddToCart}
-                  className="flex-1 bg-brand-primary text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-brand-secondary transition-all shadow-lg shadow-brand-primary/25 active:scale-95"
-                >
-                  <Plus size={20} />
-                  Add to Cart
-                </button>
-              </div>
+              )}
             </div>
 
             <div className="flex items-center justify-between px-2">
@@ -361,16 +444,16 @@ export default function ProductDetail() {
                 <ThermometerSnowflake size={24} />
               </div>
               <div>
-                <h3 className="text-xl font-bold">Storage Tips</h3>
-                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Keep it fresh for longer</p>
+                <h3 className="text-xl font-bold">Storage & Handling Instructions</h3>
+                <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">Commercial Cold Chain Best Practices</p>
               </div>
             </div>
             <ul className="space-y-4">
               {[
-                'Store in the coldest part of your refrigerator (0-2°C) if cooking within 24 hours.',
-                'If storing longer, wrap tightly in cling film and freeze immediately.',
-                'Do not wash with tap water before storing; wash only just before cooking.',
-                'Use within 2 days for optimal flavor and nutritional value.'
+                'Immediately transfer to walk-in freezer (-18°C) or chiller (0-2°C) upon arrival.',
+                'Maintain strict FIFO (First In, First Out) inventory rotation.',
+                'Do not break the cold chain; ensure prep areas are temperature controlled.',
+                'Thaw under refrigeration, never at room temperature or warm water.'
               ].map((tip, idx) => (
                 <li key={idx} className="flex gap-3 text-sm text-gray-600 leading-relaxed">
                   <span className="w-5 h-5 rounded-full bg-white flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-brand-primary border border-blue-100">
