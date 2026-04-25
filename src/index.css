@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=JetBrains+Mono:wght@400;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-primary: #1a3c5a; /* Deep ocean blue */
+  --color-brand-secondary: #f47b20; /* Orange/Coral accent */
+  --color-brand-bg: #f8f9fa;
+  --color-brand-card: #ffffff;
+  
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-bg text-gray-950 font-sans antialiased;
+  }
+  
+  h1, h2, h3, h4 {
+    @apply font-serif font-semibold tracking-tight;
+  }
+}
+
+.glass-panel {
+  @apply bg-white/80 backdrop-blur-md border border-white/20;
+}
+
+.ocean-gradient {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+}
+

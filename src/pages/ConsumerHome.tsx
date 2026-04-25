@@ -1,0 +1,555 @@
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  ShoppingBag, 
+  Search, 
+  Menu, 
+  X, 
+  ChevronRight, 
+  Star, 
+  MapPin, 
+  Truck, 
+  ShieldCheck,
+  Fish,
+  Waves,
+  Heart,
+  Image as ImageIcon
+} from 'lucide-react';
+import { cn } from '../lib/utils';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '../components/Toast';
+import { useStore, Product } from '../lib/store';
+
+// Hardcoded categories removed to use dynamic store categories
+
+interface ProductProps {
+  product: Product;
+  onCartAdd: () => void;
+  onFavoriteToggle: (e: React.MouseEvent) => void;
+  isFavorite: boolean;
+  onNavigate: () => void;
+  key?: React.Key;
+}
+
+function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, onNavigate }: ProductProps) {
+  const isOutOfStock = (product.stock + product.incomingStock - product.soldToday) <= 0;
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      onClick={onNavigate}
+      className={cn(
+        "group bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-2xl transition-all duration-500 cursor-pointer flex flex-col h-full",
+        isOutOfStock && "opacity-75 grayscale-[0.5]"
+      )}
+    >
+      <div className="relative h-64 overflow-hidden bg-gray-100 flex items-center justify-center">
+        {product.image ? (
+          <img 
+            src={product.image} 
+            alt={product.name}
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <div className="flex flex-col items-center gap-2 text-gray-300">
+            <ImageIcon size={48} strokeWidth={1} />
+            <span className="text-[10px] font-bold uppercase tracking-widest">No Image Available</span>
+          </div>
+        )}
+        <div className="absolute top-4 left-4 flex gap-2">
+          <span className="bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold uppercase text-brand-primary">
+            {product.origin}
+          </span>
+          {isOutOfStock && (
+            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-[10px] font-bold uppercase">
+              Out of Stock
+            </span>
+          )}
+        </div>
+        <button 
+          onClick={onFavoriteToggle}
+          className={cn(
+            "absolute top-4 right-4 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-sm",
+            isFavorite ? "bg-red-50 text-red-500" : "bg-white/90 backdrop-blur text-gray-400 hover:text-red-500"
+          )}
+        >
+          <Heart size={18} fill={isFavorite ? "currentColor" : "none"} />
+        </button>
+      </div>
+      
+      <div className="p-6 flex flex-col flex-1">
+        <h3 className="text-2xl mb-2 text-gray-950 font-sans font-bold group-hover:text-brand-primary transition-colors leading-tight">{product.name}</h3>
+        <p className="text-gray-400 text-sm mb-6 flex items-center gap-1 opacity-80">
+          <MapPin size={12} /> {product.origin}
+        </p>
+
+        <div className="flex items-end justify-between mt-auto">
+          <div className="flex items-baseline gap-1">
+            <span className="text-3xl font-bold text-brand-primary tracking-tight">₹{product.price}</span>
+            <span className="text-gray-400 text-sm mb-1">/{product.unit}</span>
+          </div>
+          <button 
+            disabled={isOutOfStock}
+            onClick={(e) => {
+              e.stopPropagation();
+              onCartAdd();
+            }}
+            className="bg-brand-primary text-white px-5 py-3 rounded-2xl hover:bg-brand-secondary transition-all active:scale-95 flex items-center gap-2 shadow-lg shadow-blue-900/10 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ShoppingBag size={18} />
+            <span className="text-xs font-bold uppercase tracking-wider">{isOutOfStock ? 'Sold Out' : 'Add'}</span>
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+export default function ConsumerHome() {
+  const { products: PRODUCTS, categories } = useStore();
+  const [activeCategory, setActiveCategory] = useState('Seafood (Regular Fish)');
+  const [sortBy, setSortBy] = useState<'rating' | 'price' | 'newest'>('rating');
+  const [cartCount, setCartCount] = useState(0);
+  const [showCart, setShowCart] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [favorites, setFavorites] = useState<number[]>([]);
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+
+  const filteredProducts = PRODUCTS
+    .filter(p => {
+      const matchesCategory = p.category === activeCategory;
+      const isVisible = p.isVisibleConsumer;
+      return matchesCategory && isVisible;
+    })
+    .sort((a, b) => {
+      if (sortBy === 'price') return a.price - b.price;
+      if (sortBy === 'rating') return b.rating - a.rating;
+      return b.id - a.id;
+    });
+
+  const toggleFavorite = (id: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const isFav = favorites.includes(id);
+    if (!isFav) {
+      showToast("Added to your wishlist", "success");
+    }
+    setFavorites(prev => 
+      prev.includes(id) ? prev.filter(fid => fid !== id) : [...prev, id]
+    );
+  };
+
+  const scrollToProducts = () => {
+    const el = document.getElementById('marketplace-section');
+    el?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Navbar */}
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div 
+            className="flex items-center gap-2 cursor-pointer" 
+            onClick={() => navigate('/')}
+          >
+            <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-10 w-auto" />
+            <span className="text-2xl font-bold text-brand-primary">Kadal 2 Kadaai</span>
+          </div>
+
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+            <button onClick={scrollToProducts} className="hover:text-brand-primary transition-colors">Marketplace</button>
+            <button onClick={() => navigate('/sustainability')} className="hover:text-brand-primary transition-colors">Sustainability</button>
+            <button onClick={() => navigate('/recipes')} className="hover:text-brand-primary transition-colors">Recipes</button>
+            <button onClick={() => navigate('/b2b')} className="hover:text-brand-primary transition-colors">Wholesale</button>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <button 
+              className="p-2 text-gray-400 hover:text-gray-600"
+              onClick={() => setShowSearch(true)}
+            >
+              <Search size={20} />
+            </button>
+            <button 
+              className="relative p-2 text-gray-600 hover:text-brand-primary transition-colors"
+              onClick={() => setShowCart(true)}
+            >
+              <ShoppingBag size={24} />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-brand-secondary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
+                  {cartCount}
+                </span>
+              )}
+            </button>
+            <button className="md:hidden p-2 text-gray-600">
+              <Menu size={24} />
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative h-[40vh] overflow-hidden bg-brand-primary">
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=2000"
+            className="w-full h-full object-cover opacity-60 scale-105"
+            alt="Hero Sea"
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-primary via-transparent to-transparent" />
+        </div>
+        
+        <div className="relative h-full max-w-7xl mx-auto px-6 flex flex-col justify-center items-center text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-5xl md:text-6xl text-white mb-4 leading-tight">
+              Fresh Catch <br/>
+              <span className="italic text-brand-secondary font-light">Direct to Your Door</span>
+            </h1>
+          </motion.div>
+        </div>
+      </section>
+
+      <div className="max-w-[1600px] mx-auto px-6 flex gap-8">
+        {/* Sidebar */}
+        <aside className="w-80 shrink-0 sticky top-[88px] h-[calc(100vh-120px)] py-12 overflow-y-auto no-scrollbar border-r border-gray-100">
+          <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-8 px-4">Categories</h3>
+          <div className="space-y-2">
+            {categories.filter(c => c.isVisibleConsumer).map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setActiveCategory(cat.name);
+                  const el = document.getElementById('marketplace-section');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className={cn(
+                  "w-full text-left px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center justify-between group",
+                  activeCategory === cat.name 
+                    ? "bg-brand-primary text-white shadow-lg shadow-blue-900/10" 
+                    : "text-gray-500 hover:bg-gray-50 hover:text-brand-primary"
+                )}
+              >
+                <span className="truncate">{cat.name}</span>
+                <ChevronRight size={16} className={cn(
+                  "transition-transform",
+                  activeCategory === cat.name ? "translate-x-0" : "opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0"
+                )} />
+              </button>
+            ))}
+          </div>
+        </aside>
+
+        {/* Main Content */}
+        <main id="marketplace-section" className="flex-1 py-12">
+          <div className="flex items-center justify-between mb-12">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">{activeCategory}</h2>
+              <p className="text-gray-500 text-sm">Showing {filteredProducts.length} items</p>
+            </div>
+            <div className="flex items-center gap-4">
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-xs font-bold text-gray-600 outline-none focus:ring-2 focus:ring-brand-primary/10"
+              >
+                <option value="rating">Top Rated</option>
+                <option value="price">Price: Low to High</option>
+                <option value="newest">New Arrivals</option>
+              </select>
+            </div>
+          </div>
+
+          <motion.div 
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <ProductCard 
+                    key={product.id}
+                    product={product}
+                    onCartAdd={() => setCartCount(prev => prev + 1)}
+                    onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
+                    isFavorite={favorites.includes(product.id)}
+                    onNavigate={() => navigate(`/product/${product.id}`)}
+                  />
+                ))
+              ) : (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="col-span-full py-20 text-center bg-gray-50 rounded-3xl border border-dashed border-gray-200"
+                >
+                  <p className="text-gray-400 text-lg">No products found in this category.</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        </main>
+      </div>
+
+      {/* Search Overlay */}
+      <AnimatePresence>
+        {showSearch && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-white z-[100] flex flex-col p-8"
+          >
+             <div className="max-w-4xl mx-auto w-full">
+                <div className="flex justify-between items-center mb-12">
+                   <h2 className="text-3xl font-serif text-brand-primary">Search Store</h2>
+                   <button onClick={() => setShowSearch(false)} className="p-4 hover:bg-gray-100 rounded-full">
+                      <X size={32} />
+                   </button>
+                </div>
+                <div className="flex items-center gap-4 border-b-2 border-brand-primary py-6 mb-12">
+                   <Search size={32} className="text-gray-300" />
+                   <input 
+                    type="text" 
+                    autoFocus
+                    placeholder="Search fresh fish, shellfish, or recipes..." 
+                    className="w-full bg-transparent text-3xl font-sans outline-none placeholder:text-gray-200"
+                   />
+                </div>
+                <div className="grid md:grid-cols-2 gap-12">
+                   <div>
+                      <h4 className="text-xs uppercase font-bold tracking-[0.2em] text-gray-400 mb-6">Popular Searches</h4>
+                      <div className="flex flex-wrap gap-3">
+                         {['Salmon Fillet', 'Tiger Prawns', 'Bluefin Sashimi', 'Oysters', 'Lobster Tails'].map(tag => (
+                           <button key={tag} className="px-6 py-2 bg-gray-50 hover:bg-brand-secondary hover:text-white rounded-full text-sm font-bold transition-all border border-gray-100">
+                             {tag}
+                           </button>
+                         ))}
+                      </div>
+                   </div>
+                   <div>
+                      <h4 className="text-xs uppercase font-bold tracking-[0.2em] text-gray-400 mb-6">Recent Collections</h4>
+                      <div className="space-y-4">
+                         {['Norwegian Winter Specials', 'Sustainable Shellfish Guide', 'Japanese Sashimi Grade Imports'].map(col => (
+                           <div key={col} className="flex items-center gap-4 group cursor-pointer">
+                              <div className="w-12 h-12 bg-gray-100 rounded-xl group-hover:bg-brand-primary transition-colors" />
+                              <span className="font-bold text-gray-900 group-hover:text-brand-primary transition-colors">{col}</span>
+                           </div>
+                         ))}
+                      </div>
+                   </div>
+                </div>
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cart Sidebar */}
+      <AnimatePresence>
+        {showCart && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowCart(false)}
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]" 
+            />
+            <motion.div 
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl z-[70] p-8 flex flex-col"
+            >
+              <div className="flex items-center justify-between mb-8">
+                <h3 className="text-2xl font-serif">Your Basket</h3>
+                <button 
+                  onClick={() => setShowCart(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto">
+                {cartCount === 0 ? (
+                  <div className="h-full flex flex-col items-center justify-center text-gray-400 gap-4">
+                    <ShoppingBag size={64} strokeWidth={1} />
+                    <p className="font-medium">Your basket is empty</p>
+                    <button 
+                      onClick={() => setShowCart(false)}
+                      className="text-brand-primary underline underline-offset-4"
+                    >
+                      Start Shopping
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Simulated cart item */}
+                    <div className="flex gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
+                      <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                        <img src={PRODUCTS[0].image} className="w-full h-full object-cover" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-gray-900 leading-tight">Wild Atlantic Salmon</h4>
+                        <p className="text-gray-400 text-xs mb-2">1.5 lbs</p>
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold">$37.48</span>
+                          <div className="flex items-center gap-3">
+                            <button onClick={() => setCartCount(c => Math.max(0, c - 1))} className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center text-sm">-</button>
+                            <span className="text-sm font-bold">1</span>
+                            <button onClick={() => setCartCount(c => c + 1)} className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center text-sm">+</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-auto pt-8 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-gray-500">Subtotal</span>
+                  <span className="text-xl font-bold">${(cartCount * 25).toFixed(2)}</span>
+                </div>
+                <button 
+                  onClick={() => navigate('/checkout')}
+                  className="w-full py-4 bg-brand-primary text-white rounded-xl font-bold hover:bg-brand-secondary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={cartCount === 0}
+                >
+                  Checkout Now
+                </button>
+                <button 
+                  onClick={() => setShowCart(false)}
+                  className="w-full py-4 bg-white text-gray-400 text-sm font-medium hover:text-gray-600 transition-all"
+                >
+                  Continue Shopping
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Features */}
+      <section className="py-24 bg-brand-primary text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
+          <Fish size={400} className="rotate-12 translate-x-20" />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid md:grid-cols-3 gap-12">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
+                <Truck size={32} className="text-brand-secondary" />
+              </div>
+              <h4 className="text-2xl mb-3">Free Cold-Chain Delivery</h4>
+              <p className="text-blue-100/60 leading-relaxed">
+                Temperature-controlled delivery within 24 hours of landing at our docks. 
+                Free for orders over $150.
+              </p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
+                <ShieldCheck size={32} className="text-brand-secondary" />
+              </div>
+              <h4 className="text-2xl mb-3">100% Quality Guaranteed</h4>
+              <p className="text-blue-100/60 leading-relaxed">
+                If it's not the best seafood you've ever had, we'll refund you instantly. 
+                No questions asked.
+              </p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center mb-6 border border-white/20">
+                <MapPin size={32} className="text-brand-secondary" />
+              </div>
+              <h4 className="text-2xl mb-3">Full Traceability</h4>
+              <p className="text-blue-100/60 leading-relaxed">
+                Scan the QR code on your package to see exactly where and when 
+                your seafood was caught.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-50 pt-20 pb-10 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-4 gap-12 mb-20">
+          <div className="col-span-2">
+            <div className="flex items-center gap-2 mb-6">
+              <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-8 w-auto" />
+              <span className="text-2xl font-bold text-brand-primary">Kadal 2 Kadaai</span>
+            </div>
+            <p className="text-gray-500 max-w-sm leading-relaxed mb-8">
+              Revolutionizing the seafood industry through transparency, logistics, 
+              and direct-to-consumer sustainability.
+            </p>
+            <div className="flex gap-4">
+              <div 
+                onClick={() => showToast("Opening LinkedIn Profile...", "info")}
+                className="w-10 h-10 bg-white rounded-full border border-gray-200 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all cursor-pointer"
+              >
+                <span className="text-sm font-bold">In</span>
+              </div>
+              <div 
+                onClick={() => showToast("Follow us on Facebook", "info")}
+                className="w-10 h-10 bg-white rounded-full border border-gray-200 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all cursor-pointer"
+              >
+                <span className="text-sm font-bold">Fb</span>
+              </div>
+              <div 
+                onClick={() => showToast("Follow us on Instagram", "info")}
+                className="w-10 h-10 bg-white rounded-full border border-gray-200 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all cursor-pointer"
+              >
+                <span className="text-sm font-bold">Ig</span>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h5 className="text-gray-900 font-bold mb-6">Marketplace</h5>
+            <ul className="space-y-4 text-gray-500 text-sm font-medium">
+              <li><button onClick={scrollToProducts} className="hover:text-brand-primary">All Products</button></li>
+              <li><button onClick={scrollToProducts} className="hover:text-brand-primary">New Arrivals</button></li>
+              <li><button onClick={scrollToProducts} className="hover:text-brand-primary">Best Sellers</button></li>
+              <li><button onClick={() => navigate('/checkout')} className="hover:text-brand-primary">Gift Cards</button></li>
+              <li><button onClick={() => navigate('/checkout')} className="hover:text-brand-primary">Subscription Box</button></li>
+            </ul>
+          </div>
+
+          <div>
+            <h5 className="text-gray-900 font-bold mb-6">Company</h5>
+            <ul className="space-y-4 text-gray-500 text-sm font-medium">
+              <li><button onClick={() => navigate('/sustainability')} className="hover:text-brand-primary">Our Story</button></li>
+              <li><button onClick={() => navigate('/sustainability')} className="hover:text-brand-primary">Sustainability</button></li>
+              <li><button onClick={() => navigate('/b2b')} className="hover:text-brand-primary">Partner With Us</button></li>
+              <li><button onClick={() => navigate('/recipes')} className="hover:text-brand-primary">Chef's Blog</button></li>
+              <li><button onClick={() => navigate('/')} className="hover:text-brand-primary">Contact Support</button></li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:row items-center justify-between border-t border-gray-200 pt-8 gap-4">
+          <p className="text-gray-400 text-xs text-center md:text-left">
+            &copy; 2024 Kadal 2 Kadaai. All fish ethically sourced.
+          </p>
+          <div className="flex gap-6 text-xs text-gray-400">
+            <a href="#">Privacy Policy</a>
+            <a href="#">Terms of Service</a>
+            <a href="#">Sitemap</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
