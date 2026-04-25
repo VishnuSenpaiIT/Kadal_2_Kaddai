@@ -224,32 +224,35 @@ export default function ConsumerHome() {
       </section>
 
       <div className="max-w-[1600px] mx-auto px-4 md:px-6 flex flex-col lg:flex-row gap-8">
-        {/* Mobile Category Selector */}
-        <div className="lg:hidden mt-8">
-          <div className="flex items-center justify-between mb-4 px-4">
-            <h3 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Categories</h3>
-            <span className="text-[10px] text-brand-secondary font-bold animate-pulse">Scroll to see all →</span>
+        {/* Mobile Category Grid */}
+        <div className="lg:hidden mt-8 px-4">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Browse Categories</h3>
           </div>
-          <div className="overflow-x-auto no-scrollbar -mx-4 px-4 pb-4">
-            <div className="flex gap-2 min-w-max">
-              {categories.filter(c => c.isVisibleConsumer).map(cat => (
-                <button
-                  key={cat.id}
-                  onClick={() => {
-                    setActiveCategory(cat.name);
-                    scrollToProducts();
-                  }}
-                  className={cn(
-                    "px-5 py-2.5 rounded-full font-bold text-xs transition-all border whitespace-nowrap",
-                    activeCategory === cat.name 
-                      ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-blue-900/20" 
-                      : "bg-white text-gray-500 border-gray-100 hover:border-brand-primary/30"
-                  )}
-                >
-                  {cat.name}
-                </button>
-              ))}
-            </div>
+          <div className="grid grid-cols-2 gap-3 mb-4">
+            {categories.filter(c => c.isVisibleConsumer).map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setActiveCategory(cat.name);
+                  scrollToProducts();
+                }}
+                className={cn(
+                  "px-4 py-4 rounded-2xl font-bold text-[13px] transition-all border text-left flex flex-col justify-between h-24",
+                  activeCategory === cat.name 
+                    ? "bg-brand-primary text-white border-brand-primary shadow-xl shadow-blue-900/20 scale-[1.02]" 
+                    : "bg-gray-50 text-gray-600 border-gray-100 hover:border-brand-primary/30"
+                )}
+              >
+                <span className="leading-tight">{cat.name}</span>
+                <div className={cn(
+                  "w-6 h-6 rounded-lg flex items-center justify-center",
+                  activeCategory === cat.name ? "bg-white/20" : "bg-white border border-gray-100"
+                )}>
+                  <ChevronRight size={14} />
+                </div>
+              </button>
+            ))}
           </div>
         </div>
 

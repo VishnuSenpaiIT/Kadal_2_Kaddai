@@ -160,7 +160,7 @@ export default function ProductDetail() {
                 <div>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Price per kg</p>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl font-bold text-brand-primary">₹{product.price * 80}</span>
+                    <span className="text-3xl font-bold text-brand-primary">₹{product.price}</span>
                     <span className="text-sm text-gray-400">/ kg</span>
                   </div>
                 </div>
@@ -413,7 +413,7 @@ export default function ProductDetail() {
                 <div className="p-5">
                   <h3 className="font-bold text-sm text-[#1A2E44] mb-2 line-clamp-1">{p.name}</h3>
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-brand-primary">₹{p.price * 80}</span>
+                    <span className="font-bold text-brand-primary">₹{p.price}</span>
                     <div className="flex items-center gap-1 text-orange-400">
                       <Star size={12} fill="currentColor" />
                       <span className="text-[10px] font-bold text-[#1A2E44]">{p.rating}</span>
