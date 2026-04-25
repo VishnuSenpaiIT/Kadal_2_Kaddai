@@ -36,6 +36,31 @@ const PAST_ORDERS = [
   { id: 'B2B-8821', date: 'Mon, 6:00 AM', items: '15kg Seer Fish, 5kg Crab', total: 12200 },
 ];
 
+const FilterSection = ({ title, options, defaultOpen = true }: { title: string, options: string[], defaultOpen?: boolean }) => {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+  return (
+    <div className="border-b border-gray-100 py-4 last:border-0">
+      <button 
+        className="flex items-center justify-between w-full font-bold text-sm text-gray-900 group cursor-pointer outline-none"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {title}
+        <ChevronDown size={16} className={cn("text-gray-400 transition-transform duration-300", isOpen ? "rotate-180" : "")} />
+      </button>
+      <div className={cn("overflow-hidden transition-all duration-300", isOpen ? "max-h-64 opacity-100 mt-3" : "max-h-0 opacity-0")}>
+        <div className="space-y-2.5">
+          {options.map(opt => (
+            <label key={opt} className="flex items-center gap-3 cursor-pointer group">
+              <input type="checkbox" className="w-4 h-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary/20 cursor-pointer" />
+              <span className="text-sm text-gray-600 group-hover:text-gray-900 transition-colors">{opt}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function B2BDashboard() {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -388,8 +413,39 @@ export default function B2BDashboard() {
            </a>
         </div>
 
-        {/* Bulk Ordering Table */}
-        <div id="ordering-table" className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Layout with Sidebar & Table */}
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          
+          {/* Filters Sidebar */}
+          <aside className="w-full lg:w-72 shrink-0 bg-white border border-gray-200 rounded-2xl p-6 lg:sticky lg:top-28 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
+                <Filter size={18} className="text-brand-primary" />
+                Filters
+              </h3>
+              <button className="text-xs font-bold text-brand-secondary hover:underline">Clear All</button>
+            </div>
+            
+            <FilterSection title="Fish Type" options={['Seer Fish', 'Pomfret', 'Prawns', 'Crab', 'Squid', 'Tuna']} />
+            
+            <div className="border-b border-gray-100 py-4">
+              <h4 className="font-bold text-sm text-gray-900 mb-4">Price Range (per kg)</h4>
+              <div className="px-2">
+                <input type="range" min="0" max="2000" defaultValue="1500" className="w-full accent-brand-primary cursor-pointer" />
+                <div className="flex justify-between text-xs text-gray-500 font-medium mt-2">
+                  <span>₹0</span>
+                  <span>₹2000+</span>
+                </div>
+              </div>
+            </div>
+
+            <FilterSection title="Freshness" options={['Live Catch', 'Fresh Chilled (0-4°C)', 'Flash Frozen']} />
+            <FilterSection title="Cut Type" options={['Whole', 'Cleaned & Gutted', 'Fillet', 'Curry Cut', 'Steak']} />
+            <FilterSection title="Supplier Location" options={['Coastal Tamil Nadu', 'Kerala Backwaters', 'Andhra Coast', 'Gujarat Coast']} defaultOpen={false} />
+          </aside>
+
+          {/* Bulk Ordering Table */}
+          <div id="ordering-table" className="flex-1 w-full bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
           <div className="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50/50 gap-4">
             <div>
               <h2 className="text-xl font-bold text-gray-900">Today's Fresh Catch</h2>
@@ -495,6 +551,7 @@ export default function B2BDashboard() {
               </tbody>
             </table>
           </div>
+        </div>
         </div>
 
       </main>
