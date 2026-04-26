@@ -47,7 +47,8 @@ export default function CategoryPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans pb-20">
+    <div className="min-h-screen bg-[#fcfdfe] flex flex-col font-sans pb-20 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(26,60,90,0.03),transparent_50%)] pointer-events-none" />
       {/* Header / Navbar fallback for Category Page */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-[1600px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
