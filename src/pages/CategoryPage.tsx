@@ -107,29 +107,29 @@ export default function CategoryPage() {
       <main className="max-w-[1600px] mx-auto w-full px-4 md:px-6 py-8 flex-1">
         
         {/* Back Button and Breadcrumb */}
-        <div className="mb-10">
+        <div className="mb-12">
           <button 
             onClick={() => navigate('/consumer')}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all mb-6 shadow-sm group active:scale-95"
+            className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all mb-6 shadow-sm group active:scale-95"
           >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
             Back to Marketplace
           </button>
 
-          <nav className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">
+          <nav className="flex items-center gap-4 text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
             <Link to="/consumer" className="hover:text-brand-primary flex items-center gap-1 transition-colors">
               Home
             </Link>
-            <ChevronRight size={14} className="opacity-50" />
-            <span className="opacity-80">Category</span>
-            <ChevronRight size={14} className="opacity-50" />
+            <ChevronRight size={14} className="opacity-40" />
+            <span className="opacity-70">Category</span>
+            <ChevronRight size={14} className="opacity-40" />
             <span className="font-black category-accent-text">{categoryName}</span>
           </nav>
         </div>
 
         {/* Category Highlights */}
-        <section className="mb-16">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <section className="mb-24">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               { icon: <Fish size={24} />, title: "Freshly Sourced", desc: "Caught and delivered daily" },
               { icon: <ShieldCheck size={24} />, title: "Hygienic Process", desc: "Safe & clean handling" },
@@ -141,14 +141,14 @@ export default function CategoryPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * i }}
-                className="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm flex flex-col gap-4 hover:shadow-md transition-shadow"
+                className="bg-white/90 backdrop-blur-md p-8 rounded-[32px] border border-white shadow-sm flex flex-col gap-6 hover:shadow-md transition-all group cursor-default"
               >
-                <div className="w-12 h-12 bg-brand-primary/10 text-brand-primary rounded-2xl flex items-center justify-center">
+                <div className="w-14 h-14 bg-brand-primary/5 text-brand-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                   {item.icon}
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-gray-900 mb-1">{item.title}</h4>
-                  <p className="text-[10px] md:text-xs text-gray-500 font-medium">{item.desc}</p>
+                  <h4 className="text-base font-bold text-gray-900 mb-1.5">{item.title}</h4>
+                  <p className="text-xs text-gray-500 font-medium leading-relaxed">{item.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -156,29 +156,29 @@ export default function CategoryPage() {
         </section>
 
         {/* Divider / Section Header */}
-        <div className="border-t border-gray-100 pt-12 md:pt-16 mb-10">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-3xl md:text-5xl font-black text-gray-950 tracking-tight relative">
+        <div className="border-t border-gray-100/80 pt-16 mb-12">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
+            <div className="max-w-xl">
+              <div className="flex items-center gap-4 mb-3">
+                <h2 className="text-4xl md:text-6xl font-black text-gray-950 tracking-tight relative">
                   {categoryName}
-                  <div className="absolute -bottom-2 left-0 w-1/2 h-1 category-accent-text bg-current rounded-full opacity-30" />
+                  <div className="absolute -bottom-3 left-0 w-1/3 h-1.5 category-accent-text bg-current rounded-full opacity-20" />
                 </h2>
-                <span className="category-accent-bg px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                <span className="category-accent-bg px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mt-1">
                   {filteredProducts.length} Items
                 </span>
               </div>
-              <p className="text-gray-500 font-medium text-sm md:text-base">Showing premium selection for this category</p>
+              <p className="text-gray-500 font-medium text-base md:text-lg leading-relaxed">Showing the finest selection of ethically sourced seafood.</p>
             </div>
             
-            <div className="flex flex-col gap-2 min-w-[200px]">
-              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Sort Collection By</label>
+            <div className="flex flex-col gap-3 min-w-[240px]">
+              <label className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">Sort Collection</label>
               <select 
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all cursor-pointer shadow-sm"
+                className="bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm font-bold text-gray-700 outline-none focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary transition-all cursor-pointer shadow-sm hover:border-gray-300"
               >
-                <option value="rating">🏆 Top Rated</option>
+                <option value="rating">🏆 Top Rated First</option>
                 <option value="price">💰 Price: Low to High</option>
                 <option value="newest">✨ New Arrivals</option>
               </select>
