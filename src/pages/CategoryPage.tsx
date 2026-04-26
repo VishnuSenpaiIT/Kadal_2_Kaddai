@@ -139,24 +139,31 @@ export default function CategoryPage() {
           </div>
         </section>
 
-        {/* Top Section */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2 tracking-tight">{categoryName}</h2>
-            <p className="text-gray-500 font-medium text-sm md:text-base">Showing {filteredProducts.length} items</p>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sort by:</span>
-            <select 
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all cursor-pointer shadow-sm"
-            >
-              <option value="rating">Top Rated</option>
-              <option value="price">Price: Low to High</option>
-              <option value="newest">New Arrivals</option>
-            </select>
+        {/* Divider / Section Header */}
+        <div className="border-t border-gray-100 pt-12 md:pt-16 mb-10">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div>
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-3xl md:text-5xl font-black text-gray-950 tracking-tight">{categoryName}</h2>
+                <span className="bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                  {filteredProducts.length} Items
+                </span>
+              </div>
+              <p className="text-gray-500 font-medium text-sm md:text-base">Showing premium selection for this category</p>
+            </div>
+            
+            <div className="flex flex-col gap-2 min-w-[200px]">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Sort Collection By</label>
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm font-bold text-gray-700 outline-none focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary transition-all cursor-pointer shadow-sm"
+              >
+                <option value="rating">🏆 Top Rated</option>
+                <option value="price">💰 Price: Low to High</option>
+                <option value="newest">✨ New Arrivals</option>
+              </select>
+            </div>
           </div>
         </div>
 
