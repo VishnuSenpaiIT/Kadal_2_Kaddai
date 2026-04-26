@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { ChevronRight, Home, ArrowLeft, Fish, ShieldCheck, ShoppingBag, Star } from 'lucide-react';
+import { ChevronRight, Home, ArrowLeft, Fish, ShieldCheck, ShoppingBag, Star, Utensils, ChefHat, Flame, Truck } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../lib/store';
 import { useToast } from '../components/Toast';
@@ -278,6 +278,26 @@ export default function CategoryPage() {
             </div>
           </section>
         )}
+
+        {/* Perfect For Section */}
+        <section className="mb-24">
+          <h3 className="text-xl font-bold text-gray-900 mb-8 ml-1">Perfect For Your Needs</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {[
+              { icon: <Utensils size={20} />, label: "Restaurants" },
+              { icon: <ChefHat size={20} />, label: "Home Cooking" },
+              { icon: <Flame size={20} />, label: "Grilling & BBQ" },
+              { icon: <Truck size={20} />, label: "Bulk Buying" }
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-4 bg-white/50 border border-white p-5 rounded-2xl shadow-sm hover:shadow-md transition-all group cursor-pointer">
+                <div className="w-10 h-10 bg-brand-primary/5 text-brand-primary rounded-xl flex items-center justify-center group-hover:bg-brand-primary group-hover:text-white transition-all">
+                  {item.icon}
+                </div>
+                <span className="text-sm font-bold text-gray-700">{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Divider / Section Header */}
         <div id="product-listing" className="border-t border-gray-100/80 pt-16 mb-12">
