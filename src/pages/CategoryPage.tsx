@@ -96,6 +96,7 @@ export default function CategoryPage() {
             <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-8 w-auto" />
             <span className="text-lg font-bold text-brand-primary">Kadal 2 Kadaai</span>
           </div>
+        </div>
       </header>
 
       {/* Category Hero Banner */}
