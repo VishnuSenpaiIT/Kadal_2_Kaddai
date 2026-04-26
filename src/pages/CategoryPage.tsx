@@ -75,31 +75,63 @@ export default function CategoryPage() {
       </header>
 
       {/* Category Hero Banner */}
-      <section className="relative h-[250px] md:h-[300px] overflow-hidden bg-brand-primary">
+      <section className="relative h-[280px] md:h-[350px] overflow-hidden bg-brand-primary">
         <div className="absolute inset-0">
-          <img 
+          <motion.img 
+            initial={{ scale: 1 }}
+            animate={{ scale: 1.08 }}
+            transition={{ duration: 10, ease: "linear" }}
             src={
               categoryName === 'Marine Fish' ? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=1600' :
               categoryName === 'Freshwater Fish' ? 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=1600' :
               categoryName === 'Shellfish' ? 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&q=80&w=1600' :
               'https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&q=80&w=1600'
             }
-            className="w-full h-full object-cover object-center opacity-70"
+            className="w-full h-full object-cover object-center opacity-60"
             alt={categoryName}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-[#0a192f]/40 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/60 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/80 via-transparent to-transparent" />
         </div>
         <div className="relative h-full max-w-[1600px] mx-auto px-6 flex flex-col justify-center items-start">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 1 }}
+            className="max-w-2xl"
           >
-            <h1 className="text-4xl md:text-6xl text-white font-bold mb-3 drop-shadow-xl">{categoryName}</h1>
-            <p className="text-gray-200 text-sm md:text-lg max-w-lg font-medium opacity-90">
-              Freshly sourced, high-quality {categoryName.toLowerCase()} seafood delivered directly to you.
+            <div className="flex gap-2 mb-4">
+              <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+                Fresh Daily
+              </span>
+              <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+                Verified Suppliers
+              </span>
+            </div>
+            <h1 className="text-5xl md:text-7xl text-white font-bold mb-4 drop-shadow-2xl">{categoryName}</h1>
+            <p className="text-gray-100 text-base md:text-xl font-medium opacity-90 mb-8 leading-relaxed">
+              Freshly sourced, high-quality {categoryName.toLowerCase()} seafood curated for your daily needs.
             </p>
+            <div className="flex gap-4">
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('product-listing');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-brand-secondary text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-brand-secondary/90 transition-all shadow-lg shadow-orange-500/20 active:scale-95"
+              >
+                Browse Top Picks
+              </button>
+              <button 
+                onClick={() => {
+                  const el = document.getElementById('product-listing');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-white/10 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-full font-bold text-sm hover:bg-white/20 transition-all active:scale-95"
+              >
+                Explore All
+              </button>
+            </div>
           </motion.div>
         </div>
       </section>
@@ -156,7 +188,7 @@ export default function CategoryPage() {
         </section>
 
         {/* Divider / Section Header */}
-        <div className="border-t border-gray-100/80 pt-16 mb-12">
+        <div id="product-listing" className="border-t border-gray-100/80 pt-16 mb-12">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
             <div className="max-w-xl">
               <div className="flex items-center gap-4 mb-3">
