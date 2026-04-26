@@ -219,7 +219,7 @@ export default function ConsumerHome() {
 
       {/* Hero Section Carousel */}
       <section 
-        className="relative h-[70vh] overflow-hidden bg-brand-primary mb-16 md:mb-24"
+        className="relative h-[calc(100vh-73px)] min-h-[600px] overflow-hidden bg-brand-primary"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
