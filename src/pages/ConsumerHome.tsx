@@ -330,7 +330,7 @@ export default function ConsumerHome() {
         </div>
       </section>
 
-      <div className="max-w-[1600px] mx-auto px-4 md:px-6 py-16 md:py-24">
+      <div className="relative z-40 -mt-20 max-w-[1600px] mx-auto px-4 md:px-6 pt-20 pb-16 md:pb-24 bg-white rounded-t-[40px] md:rounded-t-[60px] shadow-[0_-20px_50px_-10px_rgba(0,0,0,0.1)]">
         {/* Category Cards Section */}
         <div className="mb-16 md:mb-24">
           <div className="text-center mb-12 md:mb-16">
