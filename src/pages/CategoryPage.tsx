@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { ChevronRight, Home, ArrowLeft, Fish, ShieldCheck, ShoppingBag, Star, Utensils, ChefHat, Flame, Truck } from 'lucide-react';
+import { ChevronRight, Home, ArrowLeft, Fish, ShieldCheck, ShoppingBag, Star, Utensils, ChefHat, Flame, Truck, Thermometer, Users, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../lib/store';
 import { useToast } from '../components/Toast';
@@ -355,6 +355,25 @@ export default function CategoryPage() {
                 )}
               </AnimatePresence>
             </motion.div>
+          </div>
+        </section>
+
+        {/* Post-Grid Trust Section */}
+        <section className="mt-24 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { icon: <CheckCircle size={24} />, title: "Freshness Guaranteed", desc: "Rigorous quality checks for every single catch" },
+              { icon: <Users size={24} />, title: "Verified Suppliers", desc: "Directly sourced from trusted partner boats" },
+              { icon: <Thermometer size={24} />, title: "Maintained Cold Chain", desc: "Ensuring 100% freshness during transit" }
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center text-center p-8 bg-white/40 border border-white/60 rounded-3xl backdrop-blur-sm">
+                <div className="w-16 h-16 bg-brand-primary/5 text-brand-primary rounded-2xl flex items-center justify-center mb-6">
+                  {item.icon}
+                </div>
+                <h4 className="text-lg font-bold text-gray-950 mb-2">{item.title}</h4>
+                <p className="text-sm text-gray-500 font-medium leading-relaxed">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </section>
       </main>
