@@ -35,6 +35,17 @@ export default function CategoryPage() {
       return b.id - a.id;
     });
 
+  const categoryAccents: Record<string, string> = {
+    'Marine Fish': '#1a3c5a', // Deep Ocean Blue
+    'Freshwater Fish': '#0f766e', // Teal
+    'Shellfish': '#0f766e', // Teal
+    'Exotic': '#581c87', // Muted Purple
+    'Dry Fish': '#92400e', // Warm Amber
+    'All': '#1a3c5a'
+  };
+
+  const accentColor = categoryAccents[categoryName] || '#1a3c5a';
+
   const toggleFavorite = (id: number, e: React.MouseEvent) => {
     e.stopPropagation();
     const isFav = favorites.includes(id);
@@ -49,6 +60,11 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen bg-[#fcfdfe] flex flex-col font-sans pb-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(26,60,90,0.03),transparent_50%)] pointer-events-none" />
+      <style>{`
+        .category-accent-text { color: ${accentColor}; }
+        .category-accent-bg { background-color: ${accentColor}15; color: ${accentColor}; }
+        .category-accent-border { border-color: ${accentColor}; }
+      `}</style>
       {/* Header / Navbar fallback for Category Page */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-[1600px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
@@ -107,7 +123,7 @@ export default function CategoryPage() {
             <ChevronRight size={14} className="opacity-50" />
             <span className="opacity-80">Category</span>
             <ChevronRight size={14} className="opacity-50" />
-            <span className="text-brand-primary font-black">{categoryName}</span>
+            <span className="font-black category-accent-text">{categoryName}</span>
           </nav>
         </div>
 
@@ -144,8 +160,11 @@ export default function CategoryPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-3xl md:text-5xl font-black text-gray-950 tracking-tight">{categoryName}</h2>
-                <span className="bg-brand-primary/10 text-brand-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                <h2 className="text-3xl md:text-5xl font-black text-gray-950 tracking-tight relative">
+                  {categoryName}
+                  <div className="absolute -bottom-2 left-0 w-1/2 h-1 category-accent-text bg-current rounded-full opacity-30" />
+                </h2>
+                <span className="category-accent-bg px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
                   {filteredProducts.length} Items
                 </span>
               </div>
