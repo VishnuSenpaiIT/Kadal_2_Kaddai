@@ -281,16 +281,16 @@ export default function ConsumerHome() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.8 }}
-              className="max-w-4xl"
+              className="max-w-[600px]"
             >
-              <h1 className="text-6xl md:text-8xl text-white font-bold mb-6 leading-tight drop-shadow-2xl">
+              <h1 className="text-6xl md:text-7xl lg:text-8xl text-white font-bold mb-4 leading-[1.1] drop-shadow-2xl">
                 {slides[currentSlide].title.split(' ').slice(0, -2).join(' ')} <br/>
                 {slides[currentSlide].title.split(' ').slice(-2).join(' ')}
               </h1>
-              <p className="text-xl md:text-2xl text-gray-100 mb-10 max-w-2xl font-medium leading-relaxed drop-shadow-lg opacity-90">
+              <p className="text-lg md:text-xl text-gray-100 mb-6 font-medium leading-relaxed drop-shadow-lg opacity-90">
                 {slides[currentSlide].subtitle}
               </p>
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-row flex-wrap gap-4">
                 <button 
                   onClick={scrollToProducts}
                   className="bg-brand-secondary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-secondary/90 transition-all active:scale-95 shadow-xl shadow-orange-500/20"
