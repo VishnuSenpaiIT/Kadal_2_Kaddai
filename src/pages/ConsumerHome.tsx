@@ -229,16 +229,20 @@ export default function ConsumerHome() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 1.2 }}
             className="absolute inset-0"
           >
-            <img 
+            <motion.img 
+              key={`img-${currentSlide}`}
               src={slides[currentSlide].image}
+              initial={{ scale: 1 }}
+              animate={{ scale: 1.08 }}
+              transition={{ duration: 8, ease: "linear" }}
               className="w-full h-full object-cover object-center opacity-80"
               alt={slides[currentSlide].title}
               referrerPolicy="no-referrer"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-[#0a192f]/40 to-transparent" />
           </motion.div>
         </AnimatePresence>
         
