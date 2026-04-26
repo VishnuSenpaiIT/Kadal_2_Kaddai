@@ -206,13 +206,29 @@ export default function ConsumerHome() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="max-w-5xl"
+            className="max-w-4xl"
           >
-            <h1 className="text-5xl md:text-7xl lg:text-8xl text-white mb-6 leading-tight drop-shadow-2xl">
+            <h1 className="text-6xl md:text-8xl text-white font-bold mb-6 leading-tight drop-shadow-2xl">
               Fresh Catch <br/>
-              <span className="italic text-brand-secondary font-light">Direct to Your Door</span>
+              Delivered Daily
             </h1>
-            <div className="w-24 h-1 bg-brand-secondary mb-8 rounded-full" />
+            <p className="text-xl md:text-2xl text-gray-100 mb-10 max-w-2xl font-medium leading-relaxed drop-shadow-lg opacity-90">
+              Premium seafood sourced directly from trusted suppliers
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <button 
+                onClick={scrollToProducts}
+                className="bg-brand-secondary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-secondary/90 transition-all active:scale-95 shadow-xl shadow-orange-500/20"
+              >
+                Explore Products
+              </button>
+              <button 
+                onClick={scrollToProducts}
+                className="bg-white/10 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all active:scale-95"
+              >
+                View Top Picks
+              </button>
+            </div>
           </motion.div>
         </div>
       </section>
