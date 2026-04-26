@@ -55,8 +55,37 @@ export default function CategoryPage() {
             <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-8 w-auto" />
             <span className="text-lg font-bold text-brand-primary">Kadal 2 Kadaai</span>
           </div>
-        </div>
       </header>
+
+      {/* Category Hero Banner */}
+      <section className="relative h-[250px] md:h-[300px] overflow-hidden bg-brand-primary">
+        <div className="absolute inset-0">
+          <img 
+            src={
+              categoryName === 'Marine Fish' ? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=1600' :
+              categoryName === 'Freshwater Fish' ? 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=1600' :
+              categoryName === 'Shellfish' ? 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&q=80&w=1600' :
+              'https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&q=80&w=1600'
+            }
+            className="w-full h-full object-cover object-center opacity-70"
+            alt={categoryName}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-[#0a192f]/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/60 via-transparent to-transparent" />
+        </div>
+        <div className="relative h-full max-w-[1600px] mx-auto px-6 flex flex-col justify-center items-start">
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-4xl md:text-6xl text-white font-bold mb-3 drop-shadow-xl">{categoryName}</h1>
+            <p className="text-gray-200 text-sm md:text-lg max-w-lg font-medium opacity-90">
+              Freshly sourced, high-quality {categoryName.toLowerCase()} seafood delivered directly to you.
+            </p>
+          </motion.div>
+        </div>
+      </section>
 
       <main className="max-w-[1600px] mx-auto w-full px-4 md:px-6 py-8 flex-1">
         
