@@ -99,71 +99,50 @@ export default function CategoryPage() {
         </div>
       </header>
 
-      {/* Category Hero Banner */}
-      <section className="relative h-[280px] md:h-[350px] overflow-hidden bg-brand-primary">
-        <div className="absolute inset-0">
-          <motion.img 
-            initial={{ scale: 1 }}
-            animate={{ scale: 1.08 }}
-            transition={{ duration: 10, ease: "linear" }}
-            src={
-              categoryName === 'Marine Fish' ? 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&q=80&w=1600' :
-              categoryName === 'Freshwater Fish' ? 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=1600' :
-              categoryName === 'Shellfish' ? 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&q=80&w=1600' :
-              'https://images.unsplash.com/photo-1551244072-5d12893278ab?auto=format&fit=crop&q=80&w=1600'
-            }
-            className="w-full h-full object-cover object-center opacity-60"
-            alt={categoryName}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/80 via-transparent to-transparent" />
-        </div>
-        <div className="relative h-full max-w-[1600px] mx-auto px-6 flex flex-col justify-center items-start">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1 }}
-            className="max-w-2xl"
-          >
-            <div className="flex gap-2 mb-4">
-              <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
-                Fresh Daily
-              </span>
-              <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
-                Verified Suppliers
+      {/* Refined Category Header */}
+      <section className="relative pt-12 pb-16 md:pt-20 md:pb-24 overflow-hidden">
+        {/* Immersive Background Layers */}
+        <div className="absolute inset-0 category-accent-bg opacity-[0.08] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(26,60,90,0.05),transparent_50%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 via-transparent to-[#fcfdfe] pointer-events-none" />
+        
+        <div className="max-w-[1600px] mx-auto px-4 md:px-6 relative z-10">
+          <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <button 
+              onClick={() => navigate('/consumer')}
+              className="flex items-center gap-2 text-xs md:text-sm font-bold text-gray-400 hover:text-brand-primary transition-colors group w-fit"
+            >
+              <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+              Back to Marketplace
+            </button>
+            <nav className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">
+              <Link to="/consumer" className="hover:text-brand-primary transition-colors">Home</Link>
+              <ChevronRight size={14} className="opacity-40" />
+              <span className="opacity-60">Category</span>
+              <ChevronRight size={14} className="opacity-40" />
+              <span className="category-accent-text font-black">{categoryName}</span>
+            </nav>
+          </div>
+
+          <div className="max-w-4xl">
+            <div className="flex flex-col md:flex-row md:items-center gap-4 mb-4">
+              <h1 className="text-4xl md:text-6xl font-black text-gray-950 tracking-tight">
+                {categoryName}
+              </h1>
+              <span className="category-accent-bg px-4 py-1.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest w-fit">
+                {filteredProducts.length} Products Available
               </span>
             </div>
-            <h1 className="text-5xl md:text-7xl text-white font-bold mb-4 drop-shadow-2xl">{categoryName}</h1>
-            <p className="text-gray-100 text-base md:text-xl font-medium opacity-90 mb-8 leading-relaxed">
-              Freshly sourced, high-quality {categoryName.toLowerCase()} seafood curated for your daily needs.
+            <p className="text-gray-500 text-base md:text-xl font-medium leading-relaxed max-w-2xl">
+              Discover the finest selection of {categoryName.toLowerCase()}, ethically sourced and delivered fresh to your doorstep daily.
             </p>
-            <div className="flex gap-4">
-              <button 
-                onClick={() => {
-                  const el = document.getElementById('product-listing');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="bg-brand-secondary text-white px-6 py-3 rounded-full font-bold text-sm hover:bg-brand-secondary/90 transition-all shadow-lg shadow-orange-500/20 active:scale-95"
-              >
-                Browse Top Picks
-              </button>
-              <button 
-                onClick={() => {
-                  const el = document.getElementById('product-listing');
-                  el?.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="bg-white/10 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-full font-bold text-sm hover:bg-white/20 transition-all active:scale-95"
-              >
-                Explore All
-              </button>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
       {/* Modern Sticky Filter Bar */}
       <div className="sticky top-0 z-50 bg-[#fcfdfe]/90 backdrop-blur-xl border-b border-gray-100 shadow-sm">
-        <div className="max-w-[1600px] mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-6">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between gap-6">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-1 py-2">
             {['All', ...subTypes].map(tab => (
               <button
@@ -209,28 +188,7 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      <main className="max-w-[1600px] mx-auto w-full px-4 md:px-6 py-8 flex-1">
-        
-        {/* Back Button and Breadcrumb */}
-        <div className="mb-12">
-          <button 
-            onClick={() => navigate('/consumer')}
-            className="flex items-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-2xl text-sm font-bold text-gray-700 hover:bg-gray-50 transition-all mb-6 shadow-sm group active:scale-95"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Back to Marketplace
-          </button>
-
-          <nav className="flex items-center gap-4 text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">
-            <Link to="/consumer" className="hover:text-brand-primary flex items-center gap-1 transition-colors">
-              Home
-            </Link>
-            <ChevronRight size={14} className="opacity-40" />
-            <span className="opacity-70">Category</span>
-            <ChevronRight size={14} className="opacity-40" />
-            <span className="font-black category-accent-text">{categoryName}</span>
-          </nav>
-        </div>
+      <main className="max-w-[1600px] mx-auto w-full px-4 md:px-6 py-12 flex-1">
 
         {/* Category Highlights */}
         <section className="mb-24">
@@ -246,12 +204,13 @@ export default function CategoryPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * i }}
-                className="bg-white/90 backdrop-blur-md p-8 rounded-[32px] border border-white shadow-sm flex flex-col gap-6 hover:shadow-md transition-all group cursor-default"
+                className="bg-white/90 backdrop-blur-md p-8 rounded-[32px] border border-white shadow-sm flex flex-col gap-6 hover:shadow-md transition-all group cursor-default relative overflow-hidden"
               >
-                <div className="w-14 h-14 bg-brand-primary/5 text-brand-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <div className="absolute inset-0 category-accent-bg opacity-[0.03] pointer-events-none" />
+                <div className="w-14 h-14 category-accent-bg rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 relative z-10">
                   {item.icon}
                 </div>
-                <div>
+                <div className="relative z-10">
                   <h4 className="text-base font-bold text-gray-900 mb-1.5">{item.title}</h4>
                   <p className="text-xs text-gray-500 font-medium leading-relaxed">{item.desc}</p>
                 </div>
