@@ -15,10 +15,18 @@ export default function CategoryPage() {
   
   const [sortBy, setSortBy] = useState<'rating' | 'price' | 'newest'>('rating');
   const [favorites, setFavorites] = useState<number[]>([]);
+  const [activeTab, setActiveTab] = useState('All');
+  const [inStockOnly, setInStockOnly] = useState(false);
   
   // Resolve category name
   const categoryName = location.state?.categoryName || 
     (categoryId === 'all' ? 'All' : (categoryId ? categoryId.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : ''));
+
+  // Get sub-categories/types from current products
+  const subTypes = Array.from(new Set(products
+    .filter(p => categoryName === 'All' ? true : p.category === categoryName)
+    .map(p => p.type || 'Other')
+  )).filter(Boolean);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -27,7 +35,9 @@ export default function CategoryPage() {
   const filteredProducts = products
     .filter(p => {
       const matchesCategory = categoryName && categoryName !== 'All' ? p.category === categoryName : true;
-      return matchesCategory && p.isVisibleConsumer;
+      const matchesTab = activeTab === 'All' ? true : p.type === activeTab;
+      const matchesStock = inStockOnly ? p.stock > 0 : true;
+      return matchesCategory && matchesTab && matchesStock && p.isVisibleConsumer;
     })
     .sort((a, b) => {
       if (sortBy === 'price') return a.price - b.price;
@@ -135,6 +145,54 @@ export default function CategoryPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Modern Sticky Filter Bar */}
+      <div className="sticky top-0 z-50 bg-[#fcfdfe]/90 backdrop-blur-xl border-b border-gray-100 shadow-sm">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-6 h-20 flex items-center justify-between gap-6">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar flex-1 py-2">
+            {['All', ...subTypes].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`px-6 py-2.5 rounded-full text-xs font-bold transition-all whitespace-nowrap border ${
+                  activeTab === tab 
+                    ? "bg-brand-primary text-white border-brand-primary shadow-lg shadow-brand-primary/20" 
+                    : "bg-white text-gray-500 border-gray-200 hover:border-brand-primary/50 hover:text-brand-primary"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+
+          <div className="hidden md:flex items-center gap-6 shrink-0">
+            <label className="flex items-center gap-3 cursor-pointer group">
+              <div 
+                onClick={() => setInStockOnly(!inStockOnly)}
+                className={`w-10 h-5 rounded-full relative transition-colors ${inStockOnly ? 'bg-brand-primary' : 'bg-gray-200'}`}
+              >
+                <div className={`absolute top-1 w-3 h-3 bg-white rounded-full transition-all ${inStockOnly ? 'left-6' : 'left-1'}`} />
+              </div>
+              <span className="text-xs font-bold text-gray-600 group-hover:text-brand-primary transition-colors">In Stock Only</span>
+            </label>
+
+            <div className="h-8 w-px bg-gray-100" />
+
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sort:</span>
+              <select 
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="bg-transparent text-sm font-bold text-gray-900 outline-none cursor-pointer"
+              >
+                <option value="rating">Top Rated</option>
+                <option value="price">Price</option>
+                <option value="newest">Newest</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <main className="max-w-[1600px] mx-auto w-full px-4 md:px-6 py-8 flex-1">
         
