@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { ChevronRight, Home, ArrowLeft, Fish, ShieldCheck, ShoppingBag, Star, Utensils, ChefHat, Flame, Truck, Thermometer, Users, CheckCircle } from 'lucide-react';
+import { ChevronRight, Home, ArrowLeft, Fish, ShieldCheck, ShoppingBag, Star, Utensils, ChefHat, Flame, Truck, Thermometer, Users, CheckCircle, Waves } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../lib/store';
 import { useToast } from '../components/Toast';
@@ -74,7 +74,16 @@ export default function CategoryPage() {
 
   return (
     <div className="min-h-screen bg-[#fcfdfe] flex flex-col font-sans pb-20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(26,60,90,0.03),transparent_50%)] pointer-events-none" />
+      {/* Premium Background Layers */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(26,60,90,0.05),transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(26,60,90,0.03),transparent_40%)] pointer-events-none" />
+      <div className="absolute top-[20%] right-[-10%] text-brand-primary opacity-[0.02] rotate-12 pointer-events-none">
+        <Fish size={600} strokeWidth={0.5} />
+      </div>
+      <div className="absolute bottom-[5%] left-[-5%] text-brand-primary opacity-[0.02] -rotate-12 pointer-events-none">
+        <Waves size={800} strokeWidth={0.5} />
+      </div>
+
       <style>{`
         .category-accent-text { color: ${accentColor}; }
         .category-accent-bg { background-color: ${accentColor}15; color: ${accentColor}; }
