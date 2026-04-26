@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   ShoppingBag, 
@@ -119,6 +119,34 @@ export default function ConsumerHome() {
   const [favorites, setFavorites] = useState<number[]>([]);
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const slides = [
+    {
+      image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=2000",
+      title: "Fresh Catch Delivered Daily",
+      subtitle: "Premium seafood sourced directly from trusted suppliers"
+    },
+    {
+      image: "https://images.unsplash.com/photo-1534120247760-c44c3e4a62f1?auto=format&fit=crop&q=80&w=2000",
+      title: "Ocean to Table Quality",
+      subtitle: "Experience the freshest selection of sustainably caught fish"
+    },
+    {
+      image: "https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?auto=format&fit=crop&q=80&w=2000",
+      title: "Culinary Grade Seafood",
+      subtitle: "Used by top chefs, now available for your home kitchen"
+    }
+  ];
+
+  useEffect(() => {
+    if (isPaused) return;
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [isPaused, slides.length]);
 
 
 
@@ -189,47 +217,78 @@ export default function ConsumerHome() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative h-[65vh] overflow-hidden bg-brand-primary mb-16 md:mb-24">
-        <div className="absolute inset-0">
-          <img 
-            src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=2000"
-            className="w-full h-full object-cover object-center opacity-80"
-            alt="Hero Sea"
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-        </div>
-        
-        <div className="relative h-full w-full px-10 md:px-20 flex flex-col justify-center items-start">
+      {/* Hero Section Carousel */}
+      <section 
+        className="relative h-[70vh] overflow-hidden bg-brand-primary mb-16 md:mb-24"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
+        <AnimatePresence mode="wait">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
+            key={currentSlide}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 1 }}
-            className="max-w-4xl"
+            className="absolute inset-0"
           >
-            <h1 className="text-6xl md:text-8xl text-white font-bold mb-6 leading-tight drop-shadow-2xl">
-              Fresh Catch <br/>
-              Delivered Daily
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-100 mb-10 max-w-2xl font-medium leading-relaxed drop-shadow-lg opacity-90">
-              Premium seafood sourced directly from trusted suppliers
-            </p>
-            <div className="flex flex-wrap gap-4">
-              <button 
-                onClick={scrollToProducts}
-                className="bg-brand-secondary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-secondary/90 transition-all active:scale-95 shadow-xl shadow-orange-500/20"
-              >
-                Explore Products
-              </button>
-              <button 
-                onClick={scrollToProducts}
-                className="bg-white/10 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all active:scale-95"
-              >
-                View Top Picks
-              </button>
-            </div>
+            <img 
+              src={slides[currentSlide].image}
+              className="w-full h-full object-cover object-center opacity-80"
+              alt={slides[currentSlide].title}
+              referrerPolicy="no-referrer"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           </motion.div>
+        </AnimatePresence>
+        
+        <div className="relative h-full w-full px-10 md:px-20 flex flex-col justify-center items-start z-10">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentSlide}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-4xl"
+            >
+              <h1 className="text-6xl md:text-8xl text-white font-bold mb-6 leading-tight drop-shadow-2xl">
+                {slides[currentSlide].title.split(' ').slice(0, -2).join(' ')} <br/>
+                {slides[currentSlide].title.split(' ').slice(-2).join(' ')}
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-100 mb-10 max-w-2xl font-medium leading-relaxed drop-shadow-lg opacity-90">
+                {slides[currentSlide].subtitle}
+              </p>
+              <div className="flex flex-wrap gap-4">
+                <button 
+                  onClick={scrollToProducts}
+                  className="bg-brand-secondary text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-secondary/90 transition-all active:scale-95 shadow-xl shadow-orange-500/20"
+                >
+                  Explore Products
+                </button>
+                <button 
+                  onClick={scrollToProducts}
+                  className="bg-white/10 backdrop-blur-md text-white border border-white/30 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition-all active:scale-95"
+                >
+                  View Top Picks
+                </button>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Indicators */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={cn(
+                "w-3 h-3 rounded-full transition-all duration-300",
+                currentSlide === index ? "bg-brand-secondary w-8" : "bg-white/40 hover:bg-white/60"
+              )}
+            />
+          ))}
         </div>
       </section>
 
