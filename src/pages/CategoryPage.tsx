@@ -299,72 +299,64 @@ export default function CategoryPage() {
           </div>
         </section>
 
-        {/* Divider / Section Header */}
-        <div id="product-listing" className="border-t border-gray-100/80 pt-16 mb-12">
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8">
-            <div className="max-w-xl">
-              <div className="flex items-center gap-4 mb-3">
-                <h2 className="text-4xl md:text-6xl font-black text-gray-950 tracking-tight relative">
-                  {categoryName}
-                  <div className="absolute -bottom-3 left-0 w-1/3 h-1.5 category-accent-text bg-current rounded-full opacity-20" />
-                </h2>
-                <span className="category-accent-bg px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mt-1">
-                  {filteredProducts.length} Items
+        {/* All Products Grid Section */}
+        <section id="product-listing" className="bg-white/30 backdrop-blur-md -mx-4 md:-mx-6 px-4 md:px-6 py-16 md:py-24 rounded-[40px] md:rounded-[60px] border border-white/50 shadow-inner">
+          <div className="max-w-[1600px] mx-auto">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+              <div className="flex items-center gap-4">
+                <h3 className="text-2xl md:text-4xl font-black text-gray-950 tracking-tight">All Products</h3>
+                <span className="category-accent-bg px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mt-1">
+                  {filteredProducts.length} Results
                 </span>
               </div>
-              <p className="text-gray-500 font-medium text-base md:text-lg leading-relaxed">Showing the finest selection of ethically sourced seafood.</p>
+              
+              <div className="flex items-center gap-4">
+                <p className="text-gray-500 font-bold text-xs uppercase tracking-widest hidden md:block">Refine your search</p>
+                <div className="h-4 w-px bg-gray-200 hidden md:block" />
+                <p className="text-gray-400 font-medium text-sm italic">Showing premium {categoryName.toLowerCase()} selection</p>
+              </div>
             </div>
-            
-            <div className="flex flex-col gap-3 min-w-[240px]">
-              <label className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em] ml-1">Sort Collection</label>
-              <select 
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-white border border-gray-200 rounded-2xl px-5 py-4 text-sm font-bold text-gray-700 outline-none focus:ring-4 focus:ring-brand-primary/5 focus:border-brand-primary transition-all cursor-pointer shadow-sm hover:border-gray-300"
-              >
-                <option value="rating">🏆 Top Rated First</option>
-                <option value="price">💰 Price: Low to High</option>
-                <option value="newest">✨ New Arrivals</option>
-              </select>
-            </div>
-          </div>
-        </div>
 
-        {/* Product Grid */}
-        <motion.div layout className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredProducts.length > 0 ? (
-              filteredProducts.map((product) => (
-                <ProductCard 
-                  key={product.id}
-                  product={product}
-                  onCartAdd={() => { showToast(`Added ${product.name} to cart`, 'success') }}
-                  onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
-                  isFavorite={favorites.includes(product.id)}
-                  onNavigate={() => navigate(`/product/${product.id}`)}
-                />
-              ))
-            ) : (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="col-span-full py-32 flex flex-col items-center justify-center bg-white rounded-3xl border border-dashed border-gray-200"
-              >
-                <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-4">
-                  <ArrowLeft size={24} className="rotate-180" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">No products available</h3>
-                <p className="text-gray-500 text-sm">We couldn't find any items in this category right now.</p>
-                <button 
-                  onClick={() => navigate('/consumer')}
-                  className="mt-6 px-6 py-2 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-colors cursor-pointer"
-                >
-                  Back to Store
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </motion.div>
+            {/* Product Grid */}
+            <motion.div layout className="grid grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-10">
+              <AnimatePresence mode="popLayout">
+                {filteredProducts.length > 0 ? (
+                  filteredProducts.map((product) => (
+                    <ProductCard 
+                      key={product.id}
+                      product={product}
+                      onCartAdd={() => { showToast(`Added ${product.name} to cart`, 'success') }}
+                      onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
+                      isFavorite={favorites.includes(product.id)}
+                      onNavigate={() => navigate(`/product/${product.id}`)}
+                    />
+                  ))
+                ) : (
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="col-span-full py-32 flex flex-col items-center justify-center bg-white/50 rounded-3xl border border-dashed border-gray-200"
+                  >
+                    <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 mb-4">
+                      <ArrowLeft size={24} className="rotate-180" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">No products available</h3>
+                    <p className="text-gray-500 text-sm">We couldn't find any items matching your filters.</p>
+                    <button 
+                      onClick={() => {
+                        setActiveTab('All');
+                        setInStockOnly(false);
+                      }}
+                      className="mt-6 px-6 py-2 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-colors cursor-pointer"
+                    >
+                      Clear All Filters
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </section>
       </main>
     </div>
   );
