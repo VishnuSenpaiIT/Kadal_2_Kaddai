@@ -51,27 +51,35 @@ export default function CategoryPage() {
       {/* Header / Navbar fallback for Category Page */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-[1600px] mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button onClick={() => navigate('/consumer')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
-              <ArrowLeft size={20} className="text-gray-600" />
-            </button>
-            <h1 className="text-lg font-bold text-gray-900">{categoryName}</h1>
+          <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate('/consumer')}>
+            <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-8 w-auto" />
+            <span className="text-lg font-bold text-brand-primary">Kadal 2 Kadaai</span>
           </div>
         </div>
       </header>
 
       <main className="max-w-[1600px] mx-auto w-full px-4 md:px-6 py-8 flex-1">
         
-        {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">
-          <Link to="/consumer" className="hover:text-brand-primary flex items-center gap-1 transition-colors">
-            <Home size={14} /> Home
-          </Link>
-          <ChevronRight size={14} />
-          <span>Category</span>
-          <ChevronRight size={14} />
-          <span className="text-gray-900">{categoryName}</span>
-        </nav>
+        {/* Back Button and Breadcrumb */}
+        <div className="mb-10">
+          <button 
+            onClick={() => navigate('/consumer')}
+            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all mb-6 shadow-sm group active:scale-95"
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Marketplace
+          </button>
+
+          <nav className="flex items-center gap-3 text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-widest">
+            <Link to="/consumer" className="hover:text-brand-primary flex items-center gap-1 transition-colors">
+              Home
+            </Link>
+            <ChevronRight size={14} className="opacity-50" />
+            <span className="opacity-80">Category</span>
+            <ChevronRight size={14} className="opacity-50" />
+            <span className="text-brand-primary font-black">{categoryName}</span>
+          </nav>
+        </div>
 
         {/* Top Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
