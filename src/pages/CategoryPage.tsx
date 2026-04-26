@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { ChevronRight, Home, ArrowLeft } from 'lucide-react';
+import { ChevronRight, Home, ArrowLeft, Fish, ShieldCheck, ShoppingBag, Star } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useStore } from '../lib/store';
 import { useToast } from '../components/Toast';
@@ -110,6 +110,34 @@ export default function CategoryPage() {
             <span className="text-brand-primary font-black">{categoryName}</span>
           </nav>
         </div>
+
+        {/* Category Highlights */}
+        <section className="mb-16">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {[
+              { icon: <Fish size={24} />, title: "Freshly Sourced", desc: "Caught and delivered daily" },
+              { icon: <ShieldCheck size={24} />, title: "Hygienic Process", desc: "Safe & clean handling" },
+              { icon: <ShoppingBag size={24} />, title: "Chef Approved", desc: "Best for home & dining" },
+              { icon: <Star size={24} />, title: "Premium Quality", desc: "High protein standards" }
+            ].map((item, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 * i }}
+                className="bg-white/80 backdrop-blur-md p-6 rounded-3xl border border-white shadow-sm flex flex-col gap-4 hover:shadow-md transition-shadow"
+              >
+                <div className="w-12 h-12 bg-brand-primary/10 text-brand-primary rounded-2xl flex items-center justify-center">
+                  {item.icon}
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-gray-900 mb-1">{item.title}</h4>
+                  <p className="text-[10px] md:text-xs text-gray-500 font-medium">{item.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
 
         {/* Top Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8 bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
