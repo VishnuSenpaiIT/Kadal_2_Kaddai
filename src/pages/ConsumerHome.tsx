@@ -249,7 +249,31 @@ export default function ConsumerHome() {
           </motion.div>
         </AnimatePresence>
         
-        <div className="relative h-full w-full px-10 md:px-20 flex flex-col justify-center items-start z-10">
+        {/* Floating Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+          <motion.div
+            animate={{ 
+              y: [0, -30, 0],
+              rotate: [0, 5, 0]
+            }}
+            transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-[10%] right-[5%] text-brand-secondary opacity-[0.08]"
+          >
+            <Fish size={280} strokeWidth={0.5} />
+          </motion.div>
+          <motion.div
+            animate={{ 
+              y: [0, 40, 0],
+              rotate: [0, -5, 0]
+            }}
+            transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute bottom-[10%] left-[-5%] text-white opacity-[0.05]"
+          >
+            <Waves size={450} strokeWidth={0.5} />
+          </motion.div>
+        </div>
+
+        <div className="relative h-full w-full px-10 md:px-20 flex flex-col justify-center items-start z-20">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
