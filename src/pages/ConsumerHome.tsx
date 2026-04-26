@@ -277,11 +277,11 @@ export default function ConsumerHome() {
           <AnimatePresence mode="wait">
             <motion.div
               key={currentSlide}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.8 }}
-              className="max-w-[600px]"
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="max-w-[600px] h-[320px] md:h-[400px] flex flex-col justify-center"
             >
               <h1 className="text-6xl md:text-7xl lg:text-8xl text-white font-bold mb-4 leading-[1.1] drop-shadow-2xl">
                 {slides[currentSlide].title.split(' ').slice(0, -2).join(' ')} <br/>
@@ -309,16 +309,23 @@ export default function ConsumerHome() {
         </div>
 
         {/* Indicators */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3 z-30">
           {slides.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentSlide(index)}
               className={cn(
-                "w-3 h-3 rounded-full transition-all duration-300",
-                currentSlide === index ? "bg-brand-secondary w-8" : "bg-white/40 hover:bg-white/60"
+                "w-2.5 h-2.5 rounded-full transition-all duration-500",
+                currentSlide === index ? "bg-brand-secondary w-10" : "bg-white/30 hover:bg-white/50"
               )}
             />
+          ))}
+        </div>
+
+        {/* Image Preloader */}
+        <div className="hidden">
+          {slides.map((slide, i) => (
+            <img key={i} src={slide.image} alt="preload" />
           ))}
         </div>
       </section>
