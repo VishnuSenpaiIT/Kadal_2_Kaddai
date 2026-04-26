@@ -45,6 +45,11 @@ export default function CategoryPage() {
       return b.id - a.id;
     });
 
+  const topPicks = [...products]
+    .filter(p => (categoryName === 'All' ? true : p.category === categoryName) && p.isVisibleConsumer)
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 4);
+
   const categoryAccents: Record<string, string> = {
     'Marine Fish': '#1a3c5a', // Deep Ocean Blue
     'Freshwater Fish': '#0f766e', // Teal
@@ -244,6 +249,35 @@ export default function CategoryPage() {
             ))}
           </div>
         </section>
+
+        {/* Top Picks Section */}
+        {topPicks.length > 0 && (
+          <section className="mb-24">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Most Popular Choices</h3>
+                <p className="text-sm text-gray-500 font-medium">Curated top picks from our premium selection</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {topPicks.map((product) => (
+                <div key={`top-${product.id}`} className="relative group">
+                  <div className="absolute -top-3 left-6 z-10 bg-brand-secondary text-white text-[10px] font-black px-4 py-1.5 rounded-full shadow-lg shadow-orange-500/30 uppercase tracking-widest flex items-center gap-2">
+                    <Star size={10} fill="currentColor" />
+                    Top Pick
+                  </div>
+                  <ProductCard 
+                    product={product}
+                    onCartAdd={() => { showToast(`Added ${product.name} to cart`, 'success') }}
+                    onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
+                    isFavorite={favorites.includes(product.id)}
+                    onNavigate={() => navigate(`/product/${product.id}`)}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Divider / Section Header */}
         <div id="product-listing" className="border-t border-gray-100/80 pt-16 mb-12">
