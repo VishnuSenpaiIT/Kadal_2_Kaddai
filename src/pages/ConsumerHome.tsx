@@ -190,27 +190,29 @@ export default function ConsumerHome() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative h-[40vh] overflow-hidden bg-brand-primary">
+      <section className="relative h-[65vh] overflow-hidden bg-brand-primary mb-16 md:mb-24">
         <div className="absolute inset-0">
           <img 
             src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&q=80&w=2000"
-            className="w-full h-full object-cover opacity-60 scale-105"
+            className="w-full h-full object-cover object-center opacity-80"
             alt="Hero Sea"
             referrerPolicy="no-referrer"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-primary via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
         </div>
         
-        <div className="relative h-full max-w-7xl mx-auto px-6 flex flex-col justify-center items-center text-center">
+        <div className="relative h-full w-full px-10 md:px-20 flex flex-col justify-center items-start">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 1 }}
+            className="max-w-5xl"
           >
-            <h1 className="text-4xl md:text-6xl text-white mb-4 leading-tight px-4">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl text-white mb-6 leading-tight drop-shadow-2xl">
               Fresh Catch <br/>
               <span className="italic text-brand-secondary font-light">Direct to Your Door</span>
             </h1>
+            <div className="w-24 h-1 bg-brand-secondary mb-8 rounded-full" />
           </motion.div>
         </div>
       </section>
