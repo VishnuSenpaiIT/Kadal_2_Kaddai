@@ -11,6 +11,9 @@ import Checkout from './pages/Checkout';
 import B2BOrderTracking from './pages/B2BOrderTracking';
 import B2BBuyerDashboard from './pages/B2BBuyerDashboard';
 import CategoryPage from './pages/CategoryPage';
+import Cart from './pages/Cart';
+import Orders from './pages/Orders';
+import Profile from './pages/Profile';
 import { ToastProvider } from './components/Toast';
 
 export default function App() {
@@ -24,6 +27,9 @@ export default function App() {
           <Route path="/sustainability" element={<Sustainability />} />
           <Route path="/recipes" element={<Recipes />} />
           <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/orders" element={<Orders />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/b2b" element={<B2BDashboard />} />
           <Route path="/b2b/tracking/:orderId?" element={<B2BOrderTracking />} />

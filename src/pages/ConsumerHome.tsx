@@ -14,7 +14,9 @@ import {
   Waves,
   Heart,
   Image as ImageIcon,
-  Check
+  Check,
+  User,
+  Package
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { useNavigate } from 'react-router-dom';
@@ -111,9 +113,7 @@ export function ProductCard({ product, onCartAdd, onFavoriteToggle, isFavorite, 
 }
 
 export default function ConsumerHome() {
-  const { products: PRODUCTS, categories } = useStore();
-  const [cartCount, setCartCount] = useState(0);
-  const [showCart, setShowCart] = useState(false);
+  const { products: PRODUCTS, categories, cart, addToCart } = useStore();
   const [showSearch, setShowSearch] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [favorites, setFavorites] = useState<number[]>([]);
@@ -197,13 +197,28 @@ export default function ConsumerHome() {
               <Search size={20} />
             </button>
             <button 
+              className="p-2 text-gray-400 hover:text-brand-primary transition-colors"
+              onClick={() => navigate('/orders')}
+              title="My Orders"
+            >
+              <Package size={22} />
+            </button>
+            <button 
+              className="p-2 text-gray-400 hover:text-brand-primary transition-colors"
+              onClick={() => navigate('/profile')}
+              title="My Profile"
+            >
+              <User size={22} />
+            </button>
+            <button 
               className="relative p-2 text-gray-600 hover:text-brand-primary transition-colors"
-              onClick={() => setShowCart(true)}
+              onClick={() => navigate('/cart')}
+              title="Shopping Cart"
             >
               <ShoppingBag size={24} />
-              {cartCount > 0 && (
+              {cart.length > 0 && (
                 <span className="absolute -top-1 -right-1 bg-brand-secondary text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">
-                  {cartCount}
+                  {cart.length}
                 </span>
               )}
             </button>
@@ -392,7 +407,20 @@ export default function ConsumerHome() {
                     <ProductCard 
                       key={`top-${product.id}`}
                       product={product}
-                      onCartAdd={() => setCartCount(prev => prev + 1)}
+                      onCartAdd={() => {
+                        addToCart({
+                          id: `${product.id}-1kg-Curry Cut`,
+                          productId: product.id,
+                          name: product.name,
+                          image: product.image,
+                          price: product.price,
+                          weight: '1kg',
+                          cut: 'Curry Cut',
+                          quantity: 1,
+                          unit: product.unit
+                        });
+                        showToast(`${product.name} added to cart`, 'success');
+                      }}
                       onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
                       isFavorite={favorites.includes(product.id)}
                       onNavigate={() => navigate(`/product/${product.id}`)}
@@ -412,7 +440,20 @@ export default function ConsumerHome() {
                     <ProductCard 
                       key={`rec-${product.id}`}
                       product={product}
-                      onCartAdd={() => setCartCount(prev => prev + 1)}
+                      onCartAdd={() => {
+                        addToCart({
+                          id: `${product.id}-1kg-Curry Cut`,
+                          productId: product.id,
+                          name: product.name,
+                          image: product.image,
+                          price: product.price,
+                          weight: '1kg',
+                          cut: 'Curry Cut',
+                          quantity: 1,
+                          unit: product.unit
+                        });
+                        showToast(`${product.name} added to cart`, 'success');
+                      }}
                       onFavoriteToggle={(e) => toggleFavorite(product.id, e)}
                       isFavorite={favorites.includes(product.id)}
                       onNavigate={() => navigate(`/product/${product.id}`)}
@@ -478,90 +519,6 @@ export default function ConsumerHome() {
 
       {/* Cart Sidebar */}
       <AnimatePresence>
-        {showCart && (
-          <>
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowCart(false)}
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60]" 
-            />
-            <motion.div 
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-sm bg-white shadow-2xl z-[70] p-8 flex flex-col"
-            >
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-2xl font-serif">Your Basket</h3>
-                <button 
-                  onClick={() => setShowCart(false)}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto">
-                {cartCount === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-gray-400 gap-4">
-                    <ShoppingBag size={64} strokeWidth={1} />
-                    <p className="font-medium">Your basket is empty</p>
-                    <button 
-                      onClick={() => setShowCart(false)}
-                      className="text-brand-primary underline underline-offset-4"
-                    >
-                      Start Shopping
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {/* Simulated cart item */}
-                    <div className="flex gap-4 p-4 rounded-2xl bg-gray-50 border border-gray-100">
-                      <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
-                        <img src={PRODUCTS[0].image} className="w-full h-full object-cover" />
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-gray-900 leading-tight">Wild Atlantic Salmon</h4>
-                        <p className="text-gray-400 text-xs mb-2">1.5 lbs</p>
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold">$37.48</span>
-                          <div className="flex items-center gap-3">
-                            <button onClick={() => setCartCount(c => Math.max(0, c - 1))} className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center text-sm">-</button>
-                            <span className="text-sm font-bold">1</span>
-                            <button onClick={() => setCartCount(c => c + 1)} className="w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center text-sm">+</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="mt-auto pt-8 border-t border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-gray-500">Subtotal</span>
-                  <span className="text-xl font-bold">${(cartCount * 25).toFixed(2)}</span>
-                </div>
-                <button 
-                  onClick={() => navigate('/checkout')}
-                  className="w-full py-4 bg-brand-primary text-white rounded-xl font-bold hover:bg-brand-secondary transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  disabled={cartCount === 0}
-                >
-                  Checkout Now
-                </button>
-                <button 
-                  onClick={() => setShowCart(false)}
-                  className="w-full py-4 bg-white text-gray-400 text-sm font-medium hover:text-gray-600 transition-all"
-                >
-                  Continue Shopping
-                </button>
-              </div>
-            </motion.div>
-          </>
-        )}
       </AnimatePresence>
 
       {/* Features */}

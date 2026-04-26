@@ -43,6 +43,18 @@ export interface OrderItem {
   priceAtOrder: number;
 }
 
+export interface CartItem {
+  id: string; // productId-weight-cut
+  productId: number;
+  name: string;
+  image: string;
+  price: number;
+  weight: string;
+  cut: string;
+  quantity: number;
+  unit: string;
+}
+
 export interface Order {
   id: string;
   customerName: string;
@@ -283,6 +295,7 @@ let currentVendors = [...INITIAL_VENDORS];
 let currentSupply = [...INITIAL_SUPPLY];
 let currentPerformance = [...INITIAL_PERFORMANCE];
 let currentSettings = { ...INITIAL_SETTINGS };
+let currentCart: CartItem[] = [];
 let currentMedia: MediaItem[] = INITIAL_PRODUCTS.map(p => ({
   id: `media-${p.id}`,
   url: p.image,
@@ -314,6 +327,7 @@ export const useStore = () => {
   const [performance, setPerformance] = useState(currentPerformance);
   const [settings, setSettings] = useState(currentSettings);
   const [media, setMedia] = useState(currentMedia);
+  const [cart, setCart] = useState(currentCart);
 
   useEffect(() => {
     const listener = () => {
@@ -325,6 +339,7 @@ export const useStore = () => {
       setPerformance([...currentPerformance]);
       setSettings({ ...currentSettings });
       setMedia([...currentMedia]);
+      setCart([...currentCart]);
     };
     listeners.add(listener);
     return () => {
@@ -625,6 +640,37 @@ export const useStore = () => {
     notify();
   };
 
+  const addToCart = (item: CartItem) => {
+    const existingIndex = currentCart.findIndex(i => i.id === item.id);
+    if (existingIndex > -1) {
+      currentCart = currentCart.map((i, idx) => 
+        idx === existingIndex ? { ...i, quantity: i.quantity + item.quantity } : i
+      );
+    } else {
+      currentCart = [...currentCart, item];
+    }
+    notify();
+  };
+
+  const removeFromCart = (id: string) => {
+    currentCart = currentCart.filter(i => i.id !== id);
+    notify();
+  };
+
+  const updateCartQuantity = (id: string, quantity: number) => {
+    if (quantity <= 0) {
+      removeFromCart(id);
+      return;
+    }
+    currentCart = currentCart.map(i => i.id === id ? { ...i, quantity } : i);
+    notify();
+  };
+
+  const clearCart = () => {
+    currentCart = [];
+    notify();
+  };
+
   return {
     products,
     categories,
@@ -634,6 +680,7 @@ export const useStore = () => {
     performance,
     media,
     settings,
+    cart,
     updateProduct,
     addProduct,
     bulkAddProducts,
@@ -655,6 +702,10 @@ export const useStore = () => {
     deleteMedia,
     assignMediaToProduct,
     updateSettings,
-    resetSettings
+    resetSettings,
+    addToCart,
+    removeFromCart,
+    updateCartQuantity,
+    clearCart
   };
 };
