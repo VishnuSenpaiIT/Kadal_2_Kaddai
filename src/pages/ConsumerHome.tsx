@@ -243,6 +243,9 @@ export default function ConsumerHome() {
               referrerPolicy="no-referrer"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-[#0a192f]/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/50 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/asfalt-dark.png')] opacity-[0.03] pointer-events-none" />
+            <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.5)] pointer-events-none" />
           </motion.div>
         </AnimatePresence>
         
