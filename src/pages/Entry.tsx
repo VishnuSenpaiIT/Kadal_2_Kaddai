@@ -45,8 +45,8 @@ export default function Entry() {
           <div className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center text-white shadow-lg">
             <Waves size={28} />
           </div>
-          <img src="/logo.png" alt="Kadal 2 Kadaai" className="h-20 w-auto mb-4" />
-          <h1 className="text-4xl md:text-5xl text-brand-primary">Kadal 2 Kadaai</h1>
+          <img src="/logo.png" alt="KAAAAA" className="h-20 w-auto mb-4" />
+          <h1 className="text-4xl md:text-5xl text-brand-primary">KAAAAA</h1>
         </div>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           Welcome to the world's most transparent seafood supply chain. 
